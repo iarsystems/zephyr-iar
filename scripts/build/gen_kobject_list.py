@@ -230,8 +230,19 @@ class ArrayType:
 
         return type_env[self.member_type].has_kobject()
 
-    def get_kobjects(self, addr):
+    #recurses downwards to collect the dimensions (self.elements) of posible 
+    # sub-array types, and the final element type as (elements, type)
+    def collect_dimensions_and_element_type(self):
         mt = type_env[self.member_type]
+        if isinstance(mt, ArrayType): 
+            (childelements, type) = mt.collect_dimensions_and_element_type()
+            return (self.elements + childelements, type)
+        else :
+            return (self.elements, mt)
+
+    def get_kobjects(self, addr):
+        #mt = type_env[self.member_type]
+        (es, mt) = self.collect_dimensions_and_element_type()
 
         # Stacks are arrays of _k_stack_element_t but we want to treat
         # the whole array as one kernel object (a thread stack)
@@ -240,7 +251,7 @@ class ArrayType:
             # An array of stacks appears as a multi-dimensional array.
             # The last size is the size of each stack. We need to track
             # each stack within the array, not as one huge stack object.
-            *dimensions, stacksize = self.elements
+            *dimensions, stacksize = es
             num_members = 1
             for e in dimensions:
                 num_members = num_members * e
@@ -257,7 +268,7 @@ class ArrayType:
 
         # Multidimensional array flattened out
         num_members = 1
-        for e in self.elements:
+        for e in es:
             num_members = num_members * e
 
         for i in range(num_members):
@@ -354,16 +365,19 @@ class AggregateType:
 
 
 # --- helper functions for getting data from DIEs ---
+def follow_die_ref(die, attr_name):
+    attr = die.attributes[attr_name]
+
+    #die.get_DIE_from_attribute() would perhaps be better ? 
+    offset = 0 if (attr.form == "DW_FORM_ref_addr") else die.cu.cu_offset
+    return attr.value + offset
 
 def die_get_spec(die):
     if 'DW_AT_specification' not in die.attributes:
         return None
 
-    spec_val = die.attributes["DW_AT_specification"].value
-
     # offset of the DW_TAG_variable for the extern declaration
-    offset = spec_val + die.cu.cu_offset
-
+    offset = follow_die_ref(die, "DW_AT_specification" )
     return extern_env.get(offset)
 
 
@@ -381,9 +395,7 @@ def die_get_type_offset(die):
         die = die_get_spec(die)
         if not die:
             return None
-
-    return die.attributes["DW_AT_type"].value + die.cu.cu_offset
-
+    return follow_die_ref(die, "DW_AT_type")
 
 def die_get_byte_size(die):
     if 'DW_AT_byte_size' not in die.attributes:
@@ -440,6 +452,8 @@ def analyze_die_array(die):
     type_offset = die_get_type_offset(die)
     elements = []
 
+    #gcc describes multidimensional arrays by having multiple upperbound or count children.
+    #iar uses separate DW_TAG_array_type entries.
     for child in die.iter_children():
         if child.tag != "DW_TAG_subrange_type":
             continue
@@ -447,7 +461,8 @@ def analyze_die_array(die):
         if "DW_AT_upper_bound" in child.attributes:
             ub = child.attributes["DW_AT_upper_bound"]
 
-            if not ub.form.startswith("DW_FORM_data"):
+            #iar produces DW_FORM_udata, gcc seems to like _data.
+            if (not ub.form.startswith("DW_FORM_data")) and (not ub.form.startswith("DW_FORM_udata")) :
                 continue
 
             elements.append(ub.value + 1)
@@ -456,7 +471,7 @@ def analyze_die_array(die):
         elif "DW_AT_count" in child.attributes:
             ub = child.attributes["DW_AT_count"]
 
-            if not ub.form.startswith("DW_FORM_data"):
+            if (not ub.form.startswith("DW_FORM_data")) and (not ub.form.startswith("DW_FORM_udata")) :
                 continue
 
             elements.append(ub.value)
@@ -465,6 +480,7 @@ def analyze_die_array(die):
 
     if not elements:
         if type_offset in type_env:
+            #this is broken since there is no guarntee that the die at type_offset has been processed yet.
             mt = type_env[type_offset]
             if mt.has_kobject():
                 if isinstance(mt, KobjectType) and mt.name == STACK_TYPE:
@@ -498,6 +514,9 @@ def unpack_pointer(elf, data, offset):
 
 def addr_deref(elf, addr):
     for section in elf.iter_sections():
+        if(section.header.sh_type != "SHT_PROGBITS"):
+            continue
+
         start = section['sh_addr']
         end = start + section['sh_size']
 
@@ -600,6 +619,7 @@ def find_kobjects(elf, syms):
             continue
 
         loc = die.attributes["DW_AT_location"]
+        #this does not seem to hurt IAR tools as of now since this is not true only for function local variables
         if loc.form not in ("DW_FORM_exprloc", "DW_FORM_block1"):
             debug_die(die, "kernel object '%s' unexpected location format" %
                       name)
