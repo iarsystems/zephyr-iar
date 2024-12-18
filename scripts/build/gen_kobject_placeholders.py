@@ -52,6 +52,8 @@ def output_simple_header(one_sect):
 
     out_fp.close()
 
+def align_up(value, alignment):
+    return (value + alignment - 1) // alignment * alignment
 
 def generate_linker_headers(obj):
     """Generate linker header files to be included by the linker script"""
@@ -76,6 +78,9 @@ def generate_linker_headers(obj):
             "exists": False,
             },
     }
+    for n in sections:
+        sections[n]['align'] = 4 # sections are usually at least 4-bytes aligned.
+        sections[n]['size'] = 0
 
     for one_sect in obj.iter_sections():
         # REALLY NEED to match exact type as all other sections
@@ -86,17 +91,22 @@ def generate_linker_headers(obj):
 
         name = one_sect.name
         if name in sections:
+            if args.verbose :
+                print("Found section {0}: size:{1} align:{2}".format(name, one_sect['sh_size'], one_sect['sh_addralign']))
             # Need section alignment and size
-            sections[name]['align'] = one_sect['sh_addralign']
-            sections[name]['size'] = one_sect['sh_size']
+            sections[name]['align'] = max( sections[name]['align'], one_sect['sh_addralign'])
+            sections[name]['size'] = align_up(sections[name]['size'] + one_sect['sh_size'], sections[name]['align'])
             sections[name]['exists'] = True
 
+    for name in sections:
+        if sections[name]['exists']:
             if "multiplier" in sections[name]:
                 sections[name]['size'] *= sections[name]['multiplier'] / 100
                 sections[name]['size'] = int(sections[name]['size'])
-
+            
             if "extra_bytes" in sections[name]:
                 sections[name]['size'] += int(sections[name]['extra_bytes'])
+
 
     for one_sect in sections:
         output_simple_header(sections[one_sect])
