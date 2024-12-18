@@ -5189,6 +5189,7 @@ endfunction()
 
 # Usage:
 #   zephyr_linker_section_configure(SECTION <section> [ALIGN <alignment>]
+#                                   [OFFSET <offset>]
 #                                   [PASS [NOT] <name>] [PRIO <no>] [SORT <sort>]
 #                                   [MIN_SIZE <minimum size>] [MAX_SIZE <maximum size>]
 #                                   [ANY] [FIRST] [KEEP] [INPUT <input>] [SYMBOLS [<start>[<end>]]]
@@ -5207,8 +5208,9 @@ endfunction()
 #                       first section in output.
 # SORT <NAME>         : Sort the input sections according to <type>.
 #                       Currently only `NAME` is supported.
-# MIN_SIZE <size>     : Pad section so that it at least <size> bytes in size.
-# MAX_SIZE <size>     : Check that the sections is not larger than <size> bytes.
+# OFFSET <offset>     : set <offset> to the start of the section (before content but after alignment).
+# MIN_SIZE <size>     : Pad section after content and _end symbol so that it at least <size> bytes in size.
+# MAX_SIZE <size>     : Check that the section is not larger than <size> bytes. (from _start to _end)
 # KEEP                : Do not eliminate input section during linking
 # PRIO                : The priority of the input section. Per default, input
 #                       sections order is not guaranteed by all linkers, but
