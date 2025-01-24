@@ -5051,15 +5051,13 @@ endfunction()
 # NOINPUT             : No default input sections will be defined, to setup input
 #                       sections for section <name>, the corresponding
 #                       `zephyr_linker_section_configure()` must be used.
-# PASS [NOT] <name>   : Linker pass iteration where this section should be active.
-#                       Default a section will be present during all linker passes
-#                       but in cases a section shall only be present at a specific
-#                       pass, this argument can be used. For example to only have
-#                       this section present on the `TEST` linker pass, use `PASS TEST`.
-#                       It is possible to negate <name>, such as `PASS NOT <name>`.
-#                       For example, `PASS NOT TEST` means the call is effective
-#                       on all but the `TEST` linker pass iteration.
-#
+# PASS [NOT] <name> ..: Linker pass where this section should be active.
+#                       By default a section will be present during all linker
+#                       passes.
+#                       PASS <p1> [<p2>...] makes the section present only in
+#                       the given passes.
+#                       PASS NOT <p1> [<p2>...] makes the section present in
+#                       all but the given passes.
 # Note: VMA and LMA are mutual exclusive with GROUP
 #
 function(zephyr_linker_section)
@@ -5097,14 +5095,7 @@ function(zephyr_linker_section)
   endif()
 
   if(DEFINED SECTION_PASS)
-    list(LENGTH SECTION_PASS pass_length)
-    if(${pass_length} GREATER 1)
-      list(GET SECTION_PASS 0 pass_elem_0)
-      if((NOT (${pass_elem_0} STREQUAL "NOT")) OR (${pass_length} GREATER 2))
-        message(FATAL_ERROR "zephyr_linker_section(PASS takes maximum "
-          "a single argument of the form: '<pass name>' or 'NOT <pass_name>'.")
-      endif()
-    endif()
+    zephyr_linker_check_pass_param("${SECTION_PASS}")
   endif()
 
   set(SECTION)
@@ -5307,15 +5298,12 @@ endfunction()
 #                       you may use `PRIO 50`, `PRIO 20` and so on.
 #                       To ensure an input section is at the end, it is advised
 #                       to use `PRIO 200` and above.
-# PASS [NOT] <name>   : The call should only be considered for linker pass where
-#                       <name> is defined. It is possible to negate <name>, such
-#                       as `PASS NOT <name>.
-#                       For example, `PASS TEST` means the call is only effective
-#                       on the `TEST` linker pass iteration. `PASS NOT TEST` on
-#                       all iterations the are not `TEST`.
+# PASS [NOT] <name> ..: Control in which linker passes this piece is present
+#                       See zephyr_linker_section() for details.
 # FLAGS <flags>       : Special section flags such as "+RO", +XO, "+ZI".
 # ANY                 : ANY section flag in scatter file.
 #                       The FLAGS and ANY arguments only has effect for scatter files.
+# INPUT <input>       : Input section name or list of input section names.
 #
 function(zephyr_linker_section_configure)
   set(options     "ANY;FIRST;KEEP")
@@ -5336,14 +5324,7 @@ function(zephyr_linker_section_configure)
   endif()
 
   if(DEFINED SECTION_PASS)
-    list(LENGTH SECTION_PASS pass_length)
-    if(${pass_length} GREATER 1)
-      list(GET SECTION_PASS 0 pass_elem_0)
-      if((NOT (${pass_elem_0} STREQUAL "NOT")) OR (${pass_length} GREATER 2))
-        message(FATAL_ERROR "zephyr_linker_section_configure(PASS takes maximum "
-          "a single argument of the form: '<pass name>' or 'NOT <pass_name>'.")
-      endif()
-    endif()
+    zephyr_linker_check_pass_param("${SECTION_PASS}")
   endif()
 
   set(SECTION)
@@ -5412,6 +5393,24 @@ macro(zephyr_linker_arg_val_list list arguments)
     endif()
   endforeach()
 endmacro()
+
+
+# Internal helper that checks if we have consistent PASS arguments.
+# Allow PASS [NOT] <pass> [<pass>...]
+function(zephyr_linker_check_pass_param SECTION_PASS)
+  list(GET SECTION_PASS 0 FIRST_ELEMENT)
+  if("${FIRST_ELEMENT}" STREQUAL "NOT")
+    # The first NOT is ok, drop it for the coming checks
+    list(SUBLIST SECTION_PASS 1 -1 SECTION_PASS)
+  endif()
+  if(NOT SECTION_PASS)
+    message(FATAL_ERROR "At least one pass name required")
+  endif()
+  list(FIND SECTION_PASS "NOT" NOT_AT)
+  if(NOT("${NOT_AT}" STREQUAL "-1"))
+    message(FATAL_ERROR "Only PASS [NOT] <pass>...")
+  endif()
+endfunction()
 
 ########################################################
 # 6. Function helper macros
