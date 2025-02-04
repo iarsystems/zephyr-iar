@@ -8,7 +8,7 @@
 
 int main(void)
 {
-	printf("Hello IAR World! %s\n", CONFIG_BOARD_TARGET);
+	printf("Hello IAR World, plonk! %s\n", CONFIG_BOARD_TARGET);
 
 	return 0;
 }
