@@ -8,7 +8,7 @@
 
 int main(void)
 {
-	printf("Hello braver new World! %s\n", CONFIG_BOARD_TARGET);
+	printf("Hello bravest new World! %s\n", CONFIG_BOARD_TARGET);
 
 	return 0;
 }
