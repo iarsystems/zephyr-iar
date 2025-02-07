@@ -41,17 +41,8 @@ macro(configure_linker_script linker_script_gen linker_pass_define)
   else()
     set(IAR_LIB_USED "")
   endif()
+  zephyr_linker_generate_linker_settings_file(FILE ${cmake_linker_script_settings})
 
-  file(GENERATE OUTPUT ${cmake_linker_script_settings} CONTENT
-       "set(FORMAT \"$<TARGET_PROPERTY:linker,FORMAT>\" CACHE INTERNAL \"\")\n
-        set(ENTRY \"$<TARGET_PROPERTY:linker,ENTRY>\" CACHE INTERNAL \"\")\n
-        set(MEMORY_REGIONS \"$<TARGET_PROPERTY:linker,MEMORY_REGIONS>\" CACHE INTERNAL \"\")\n
-        set(GROUPS \"$<TARGET_PROPERTY:linker,GROUPS>\" CACHE INTERNAL \"\")\n
-        set(SECTIONS \"$<TARGET_PROPERTY:linker,SECTIONS>\" CACHE INTERNAL \"\")\n
-        set(SECTION_SETTINGS \"$<TARGET_PROPERTY:linker,SECTION_SETTINGS>\" CACHE INTERNAL \"\")\n
-        set(SYMBOLS \"$<TARGET_PROPERTY:linker,SYMBOLS>\" CACHE INTERNAL \"\")\n
-       "
-    )
   add_custom_command(
     OUTPUT ${linker_script_gen}
            ${STEERING_FILE}
