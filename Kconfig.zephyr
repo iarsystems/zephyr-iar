@@ -171,7 +171,7 @@ config LD_LINKER_TEMPLATE
 
 config CMAKE_LINKER_GENERATOR
 	bool "CMake generator"
-	depends on ARM
+	depends on ARM || RISCV
 	help
 	  Select this option to use the Zephyr CMake linker script generator.
 	  The linker configuration is written in CMake and the final linker

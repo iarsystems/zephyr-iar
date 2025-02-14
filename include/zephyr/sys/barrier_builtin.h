@@ -12,6 +12,7 @@
 #endif
 
 #include <zephyr/toolchain.h>
+#include <stdatomic.h>
 
 #ifdef __cplusplus
 extern "C" {

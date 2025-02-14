@@ -168,7 +168,6 @@ static void walk_stackframe(riscv_stacktrace_cb cb, void *cookie, const struct k
 	}
 }
 #else  /* !CONFIG_FRAME_POINTER */
-register uintptr_t current_stack_pointer __asm__("sp");
 static void walk_stackframe(riscv_stacktrace_cb cb, void *cookie, const struct k_thread *thread,
 			    const struct arch_esf *esf, stack_verify_fn vrfy,
 			    const _callee_saved_t *csf)
@@ -176,6 +175,7 @@ static void walk_stackframe(riscv_stacktrace_cb cb, void *cookie, const struct k
 	uintptr_t sp;
 	uintptr_t ra;
 	uintptr_t *ksp, last_ksp = 0;
+	register uintptr_t current_stack_pointer __asm__("sp");
 
 	if (esf != NULL) {
 		/* Unwind the provided exception stack frame */

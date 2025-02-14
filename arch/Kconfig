@@ -234,6 +234,7 @@ DT_CHOSEN_Z_FLASH := zephyr,flash
 
 config FLASH_SIZE
 	int "Flash Size in kB"
+	default $(dt_node_reg_size_int,$(dt_node_parent($(dt_chosen_path,$(DT_CHOSEN_Z_FLASH)))),1,K) if (XIP && RISCV)
 	default $(dt_chosen_reg_size_int,$(DT_CHOSEN_Z_FLASH),0,K) if (XIP && (ARM ||ARM64)) || !ARM
 	default 0 if !XIP
 	help
@@ -243,6 +244,7 @@ config FLASH_SIZE
 
 config FLASH_BASE_ADDRESS
 	hex "Flash Base Address"
+	default $(dt_node_reg_addr_hex,$(dt_node_parent($(dt_chosen_path,$(DT_CHOSEN_Z_FLASH)))),1) if (XIP && RISCV)
 	default $(dt_chosen_reg_addr_hex,$(DT_CHOSEN_Z_FLASH)) if (XIP && (ARM || ARM64)) || !ARM
 	default 0 if !XIP
 	help
