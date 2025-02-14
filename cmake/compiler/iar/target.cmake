@@ -57,6 +57,14 @@ if("${IAR_TOOLCHAIN_VARIANT}" STREQUAL "iccarm")
   include(${ICC_BASE}/iccarm-cpu.cmake)
   include(${ICC_BASE}/iccarm-fpu.cmake)
 endif()
+if("${IAR_TOOLCHAIN_VARIANT}" STREQUAL "iccriscv")
+  # Used for settings correct cpu/fpu option for gnu assembler
+  include(${ZEPHYR_BASE}/cmake/gcc-m-cpu.cmake)
+  include(${ZEPHYR_BASE}/cmake/gcc-m-fpu.cmake)
+
+  # Map KConfig option to icc cpu/fpu
+  include(${ICC_BASE}/iccriscv-cpu.cmake)
+endif()
 
 set(IAR_COMMON_FLAGS)
 # Minimal C compiler flags

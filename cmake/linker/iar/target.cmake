@@ -27,7 +27,7 @@ macro(configure_linker_script linker_script_gen linker_pass_define)
   set(cmake_linker_script_settings
       ${PROJECT_BINARY_DIR}/include/generated/ld_script_settings_${linker_pass_define}.cmake
   )
-  if("${linker_pass_define}" STREQUAL "LINKER_ZEPHYR_PREBUILT")
+  if("${linker_pass_define}" STREQUAL "LINKER_ZEPHYR_PREBUILT" AND "${IAR_TOOLCHAIN_VARIANT}" STREQUAL "iccarm")
     set(ILINK_THUMB_CALLS_WARNING_SUPPRESSED "--diag_suppress=Lt056")
   else()
     set(ILINK_THUMB_CALLS_WARNING_SUPPRESSED "")
