@@ -853,12 +853,6 @@ function(section_to_string)
         string(REGEX REPLACE "alphabetical order, " "" INIT_TEMP "${INIT_TEMP}")
         string(REGEX REPLACE "{ readwrite }" "{ }" INIT_TEMP "${INIT_TEMP}")
 
-        # If any content is marked as keep, is has to be applied to the init block
-        # too, esp. for blocks that are not referenced (e.g. empty blocks wiht min_size)
-        if(to_be_kept)
-          list(APPEND to_be_kept "block ${name_clean}_init")
-        endif()
-
         set(TEMP "${TEMP}\n${INIT_TEMP}\n")
         if(DEFINED current_sections)
           set(TEMP "${TEMP}\ninitialize manually with copy friendly\n")
@@ -867,18 +861,12 @@ function(section_to_string)
             set(TEMP "${TEMP}  ${section},\n")
           endforeach()
           set(TEMP "${TEMP}};")
+          set(current_sections)
+
         endif()
-        set(current_sections)
       endif()
     endif()
   endif()
-
-  # Finally, add the keeps.
-  if(to_be_kept)
-    list(JOIN to_be_kept ", " K)
-    set(TEMP "${TEMP}\nkeep { ${K} };\n")
-  endif()
-
   set(${STRING_STRING} "${${STRING_STRING}}\n${TEMP}\n" PARENT_SCOPE)
 endfunction()
 
