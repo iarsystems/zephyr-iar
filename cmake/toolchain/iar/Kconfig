@@ -32,6 +32,10 @@ config IAR_ZEPHYR_INIT
 endchoice
 
 
+config TOOLCHAIN_IAR_SUPPORTS_USERSPACE
+       def_bool y
+       select TOOLCHAIN_SUPPORTS_USERSPACE
+
 config IAR_SEMIHOSTING
 	bool "Use the IAR semihosting implementation."
 	depends on IAR_LIBC
