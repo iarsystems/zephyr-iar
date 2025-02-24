@@ -78,6 +78,7 @@ if("${IAR_TOOLCHAIN_VARIANT}" STREQUAL "iccarm")
     --cpu=${ICCARM_CPU}
     -DRTT_USE_ASM=0       #WA for VAAK-232
     --diag_suppress=Ta184  # Using zero sized arrays except for as last member of a struct is discouraged and dereferencing elements in such an array has undefined behavior
+    --diag_suppress=Go029  # arch/arm/syscall.h",160  Error[Go029]: Variable "ret" is used uninitialized at this location in the sourcecode.
   )
 endif()
 

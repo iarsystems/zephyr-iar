@@ -60,7 +60,7 @@ if(CONFIG_GEN_ISR_TABLES)
   # This will always keep .intList in a harmless location
   # until we can implement a proper DISCARD.
   if(ZEPHYR_TOOLCHAIN_VARIANT STREQUAL "iar")
-    zephyr_linker_section(NAME .intList GROUP RODATA_REGION NOINPUT)
+    zephyr_linker_section(NAME .intList GROUP IDT_LIST NOINPUT)
     zephyr_linker_section_configure(SECTION .intList KEEP INPUT ".irq_info" FIRST)
     zephyr_linker_section_configure(SECTION .intList KEEP INPUT ".intList")
   else()

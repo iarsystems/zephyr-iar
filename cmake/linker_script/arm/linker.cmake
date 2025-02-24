@@ -30,8 +30,9 @@ endif()
 # The APP_SHARED_ALIGN and SMEM_PARTITION_ALIGN macros are defined as
 # ". = ALIGN(...)" things.
 # the cmake generator stuff needs an align-size in bytes so:
-zephyr_linker_include_var(VAR APP_SHARED_ALIGN_BYTES VALUE ${region_min_align})
-zephyr_linker_include_var(VAR SMEM_PARTITION_ALIGN_BYTES VALUE ${MPU_ALIGN_BYTES})
+zephyr_linker_include_var(VAR APP_SHARED_ALIGN_BYTES VALUE 128) #${region_min_align})
+# We must have a LOG2CEIL(size).... Help!
+zephyr_linker_include_var(VAR SMEM_PARTITION_ALIGN_BYTES VALUE 128) #${MPU_ALIGN_BYTES})
 
 # Note, the `+ 0` in formulas below avoids errors in cases where a Kconfig
 #       variable is undefined and thus expands to nothing.
@@ -54,7 +55,7 @@ endif()
 
 set(RAM_ADDR ${CONFIG_SRAM_BASE_ADDRESS})
 math(EXPR RAM_SIZE "(${CONFIG_SRAM_SIZE} + 0) * 1024" OUTPUT_FORMAT HEXADECIMAL)
-math(EXPR IDT_ADDR "${RAM_ADDR} + ${RAM_SIZE}" OUTPUT_FORMAT HEXADECIMAL)
+math(EXPR IDT_ADDR "${FLASH_ADDR} + ${FLASH_SIZE} - 2048" OUTPUT_FORMAT HEXADECIMAL)
 
 # ToDo: decide on the optimal location for this.
 # linker/ld/target.cmake based on arch, or directly in arch and scatter_script.cmake can ignore
