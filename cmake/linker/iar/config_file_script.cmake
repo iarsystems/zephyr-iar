@@ -950,6 +950,61 @@ function(symbol_to_string)
   set(${STRING_STRING} ${${STRING_STRING}} PARENT_SCOPE)
 endfunction()
 
+set_property(GLOBAL PROPERTY iar_evaluate_elements "")
+
+function(add_iar_evaluate_expression name expression undef)
+  get_property(json_array GLOBAL PROPERTY iar_evaluate_elements)
+  if(json_array)
+    string(APPEND json_array ",")
+  endif()
+  string(APPEND json_array "{\"name\":\"${name}\",\"expression\":\"${expression}\",\"undef\":\"${undef}\"}")
+  set_property(GLOBAL PROPERTY iar_evaluate_elements "${json_array}")
+  math(EXPR json_array_count "${json_array_count} + 1")
+endfunction()
+
+function(save_json_array file_name)
+  get_property(json_array GLOBAL PROPERTY iar_evaluate_elements)
+  file(WRITE ${file_name} "[${json_array}]")
+  set_property(GLOBAL PROPERTY iar_evaluate_elements "")
+endfunction()
+
+# For each sting passed to do_var_replace_in this is called to allow the
+# target to special treatment. IAR uses this to implement evaluation of
+# section sizes used for MPU_ALIGN (or any other expressions that ilink
+# does not support
+function(preview_var_replacement result_ptr src)
+  # The idea here is to catch @IAR_EVALUATE,undef:VAL,expr=<expr>@ and do either of two
+  # things:
+  # * Tag things that the linker pass post processing needs to take car of
+  # * Check if we have input from previous linker pass that we should swap in
+  # <expr> is an ld-script expression that we want to evaluate and pass on to
+  # the next linker pass.
+  # Will model input by rewriting to @IAR_EVALUATED_<sha(expr)>,undef:XXX@
+  # These will be set by a (zephyr_linker_include_generated(...) file.
+  # The tagging will be done by putting relevant info (expr) into a json that
+  # iar_linker_evaluate.py will process when we are done.
+  # Note that ,undef: is REQUIRED
+  if(NOT src MATCHES "^@IAR_EVALUATE,undef:([^,]*),expr=([^@]*)@$")
+    #default to doing nothing:
+    set(${result_ptr} "${src}" PARENT_SCOPE)
+  else()
+    # Ok, so we have something to handle:
+    set(undef ${CMAKE_MATCH_1})
+    set(expr ${CMAKE_MATCH_2})
+    string(SHA256 expr_sha ${expr} )
+    set(var_name "IAR_EVALUATED_${expr_sha}")
+    add_iar_evaluate_expression("${var_name}" "${expr}" "${undef}")
+
+    # Now, we hope that iar_linker_evaluate.py has given us a bunch of vlaues.
+    # Here is the expression to load them if so:
+    set(iar_evaluated_expression "@${var_name},undef:${undef}@")
+
+    #do var expansion of the expression:
+    do_var_replace_in(maybe_evaluated "${iar_evaluated_expression}")
+    set(${result_ptr} "${maybe_evaluated}" PARENT_SCOPE)
+  endif()
+endfunction()
+
 include(${CMAKE_CURRENT_LIST_DIR}/../linker_script_common.cmake)
 
 if(DEFINED STEERING_FILE)
@@ -960,3 +1015,5 @@ if(DEFINED STEERING_FILE)
 
   file(APPEND ${STEERING_FILE} ${steering_content})
 endif()
+
+save_json_array(${CMAKE_CURRENT_BINARY_DIR}/iar_evaluate_${PASS}.json)
