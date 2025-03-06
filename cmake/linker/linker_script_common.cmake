@@ -660,13 +660,6 @@ endfunction()
 #
 
 ## Preprocess and gather input
-foreach(VAR ${VARIABLES})
-  if("${VAR}" MATCHES "^{(.*)}$")
-    cmake_parse_arguments(VAR "" "VAR;VALUE" "" ${CMAKE_MATCH_1})
-    set(${VAR_VAR} "${VAR_VALUE}" CACHE INTERNAL "")
-  endif()
-endforeach()
-
 # By the input we have INCLUDES defined that contains the files that we need
 # to include depending on linker pass.
 foreach(file ${INCLUDES})
@@ -694,6 +687,13 @@ foreach(file ${INCLUDES})
   endif()
 endforeach()
 
+foreach(VAR ${VARIABLES})
+  if("${VAR}" MATCHES "^{(.*)}$")
+    cmake_parse_arguments(VAR "" "VAR;VALUE" "" ${CMAKE_MATCH_1})
+    set(${VAR_VAR} "${VAR_VALUE}" CACHE INTERNAL "")
+  endif()
+endforeach()
+
 # For now, lets start with @FOO@ and store each #define FOO value as a global
 # property AT_VAR_FOO (prefix to avoid name clashes).
 # We will do all the replacements in the input lists before giving them to the
@@ -704,13 +704,27 @@ foreach(file IN LISTS PREPROCESSOR_FILES )
     file(STRINGS ${file} defs REGEX ${VAR_DEF_REGEX})
     foreach(def ${defs})
       if(${def} MATCHES ${VAR_DEF_REGEX})
-        set("AT_VAR_${CMAKE_MATCH_1}" "${CMAKE_MATCH_2}")
+        set("AT_VAR_${CMAKE_MATCH_1}" "${CMAKE_MATCH_2}" CACHE INTERNAL "")
       endif()
     endforeach()
   else()
     message("Missing file ${file}")
   endif()
 endforeach()
+
+# For each sting passed to do_var_replace_in this is called to allow the
+# target to special treatment. IAR uses this to implement evaluation of
+# section sizes used for MPU_ALIGN (or any other expressions that ilink
+# does not support
+if(NOT COMMAND preview_var_replacement)
+  function(preview_var_replacement result_ptr src)
+    #default to doing nothing:
+    set(${result_ptr} "${src}" PARENT_SCOPE)
+  endfunction()
+endif()
+
+# predefined @variables@
+set(AT_VAR_AT "@") # allows escaping of @
 
 # To pickup information gathered by the scripts from the previous pass, we use
 # the syntax @FOO[,undef:VALUE][,var=VALUE]@
@@ -754,6 +768,7 @@ function(do_var_replace_in res_ptr src)
     #Resolve variables inside variables
     do_var_replace_in(value "${value}")
 
+    preview_var_replacement(value "${value}")
     if(CMAKE_VERBOSE_MAKEFILE)
       message("Using variable ${match} with value ${value}")
     endif()
