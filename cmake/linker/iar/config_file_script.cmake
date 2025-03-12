@@ -615,6 +615,7 @@ function(section_to_string)
       endforeach()
     endif()
     if(DEFINED group_parent_vma AND DEFINED group_parent_lma AND DEFINED i_min_size)
+      # Ensure that the _init block is kept, even if it has an empty section pattern.
       list(APPEND to_be_kept "block ${name_clean}_${idx}_init")
     endif()
     if(DEFINED symbols)
