@@ -870,6 +870,12 @@ function(section_to_string)
       endif()
     endif()
   endif()
+
+  if(to_be_kept)
+    list(JOIN to_be_kept ", " K)
+    string(APPEND TEMP "\nkeep {\n${K}\n};")
+  endif()
+
   set(${STRING_STRING} "${${STRING_STRING}}\n${TEMP}\n" PARENT_SCOPE)
 endfunction()
 
