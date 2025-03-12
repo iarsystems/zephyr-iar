@@ -736,7 +736,7 @@ set(AT_VAR_AT "@") # allows escaping of @
 # AT_VAR_ prefix to avoid name-clashes
 function(do_var_replace_in res_ptr src)
   string(REGEX MATCHALL "@[^@]*@" match_res "${src}")
-  message(" _${src}_ splits into ${match_res}")
+  # message(" _${src}_ splits into ${match_res}")
   foreach(match IN LISTS match_res)
     #Drop the leading and closing @
     string(REGEX MATCH "@([^@]*)@" expr ${match})
