@@ -11,8 +11,10 @@ supported:
   - bluetooth
   - gpio
   - uart
+  - spi
   - dma
   - watchdog
+  - comparator
 testing:
   ignore_tags:
     - pm

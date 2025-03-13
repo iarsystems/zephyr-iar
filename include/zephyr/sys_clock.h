@@ -79,7 +79,7 @@ typedef struct {
  */
 #define K_TIMEOUT_EQ(a, b) ((a).ticks == (b).ticks)
 
-/** number of nanoseconds per micorsecond */
+/** number of nanoseconds per microsecond */
 #define NSEC_PER_USEC 1000U
 
 /** number of nanoseconds per millisecond */
@@ -154,11 +154,12 @@ typedef struct {
 
 /** @endcond */
 
+#ifndef CONFIG_TIMER_READS_ITS_FREQUENCY_AT_RUNTIME
 #if defined(CONFIG_SYS_CLOCK_EXISTS) && \
 	(CONFIG_SYS_CLOCK_HW_CYCLES_PER_SEC == 0)
 #error "SYS_CLOCK_HW_CYCLES_PER_SEC must be non-zero!"
 #endif
-
+#endif /* CONFIG_TIMER_READS_ITS_FREQUENCY_AT_RUNTIME */
 
 /* kernel clocks */
 

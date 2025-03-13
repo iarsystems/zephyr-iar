@@ -4,6 +4,7 @@ include(ExternalProject)
 
 if(CONFIG_HAS_RPI_PICO)
   zephyr_library()
+  zephyr_library_compile_options(-std=gnu11)
 
   set(rp2_common_dir ${ZEPHYR_HAL_RPI_PICO_MODULE_DIR}/src/rp2_common)
   set(rp2xxx_dir ${ZEPHYR_HAL_RPI_PICO_MODULE_DIR}/src/${CONFIG_SOC_SERIES})
@@ -60,7 +61,6 @@ if(CONFIG_HAS_RPI_PICO)
     ${rp2_common_dir}/hardware_clocks/clocks.c
     ${rp2_common_dir}/hardware_pll/pll.c
     ${rp2_common_dir}/hardware_xosc/xosc.c
-    ${rp2_common_dir}/hardware_watchdog/watchdog.c
     ${rp2_common_dir}/hardware_sync_spin_lock/sync_spin_lock.c
     ${rp2_common_dir}/hardware_ticks/ticks.c
     ${rp2_common_dir}/pico_bootrom/bootrom.c
@@ -104,9 +104,11 @@ if(CONFIG_HAS_RPI_PICO)
           ${rp2_common_dir}/hardware_uart/include)
 
   zephyr_library_sources_ifdef(CONFIG_PICOSDK_USE_FLASH
-          ${rp2_common_dir}/hardware_flash/flash.c)
+          ${rp2_common_dir}/hardware_flash/flash.c
+          ${rp2_common_dir}/hardware_xip_cache/xip_cache.c)
   zephyr_include_directories_ifdef(CONFIG_PICOSDK_USE_FLASH
-          ${rp2_common_dir}/hardware_flash/include)
+          ${rp2_common_dir}/hardware_flash/include
+          ${rp2_common_dir}/hardware_xip_cache/include)
 
   zephyr_include_directories_ifdef(CONFIG_PICOSDK_USE_PWM
           ${rp2_common_dir}/hardware_pwm/include)

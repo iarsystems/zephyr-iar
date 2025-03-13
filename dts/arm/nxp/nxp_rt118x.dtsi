@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 NXP
+ * Copyright 2024-2025 NXP
  *
  * SPDX-License-Identifier: Apache-2.0
  */
@@ -47,6 +47,13 @@
 				reg = <0xe000ed90 0x40>;
 			};
 		};
+	};
+
+	/* USB PLL */
+	usbclk: usbpll-clock {
+		compatible = "fixed-clock";
+		clock-frequency = <24000000>;
+		#clock-cells = <0>;
 	};
 };
 
@@ -630,6 +637,7 @@
 			reg = <0x60b40000 0x10000>;
 			mac-index = <1>;
 			si-index = <1>;
+			phy-connection-type = "internal";
 			status = "disabled";
 		};
 
@@ -640,6 +648,41 @@
 			#address-cells = <1>;
 			#size-cells = <0>;
 			status = "disabled";
+		};
+
+		switch: dsa {
+			compatible = "nxp,netc-switch";
+			status = "disabled";
+			#address-cells = <1>;
+			#size-cells = <0>;
+
+			switch_port0: switch_port@0 {
+				reg = <0>;
+				status = "disabled";
+			};
+
+			switch_port1: switch_port@1 {
+				reg = <1>;
+				status = "disabled";
+			};
+
+			switch_port2: switch_port@2 {
+				reg = <2>;
+				status = "disabled";
+			};
+
+			switch_port3: switch_port@3 {
+				reg = <3>;
+				status = "disabled";
+			};
+
+			/* Internal port */
+			switch_port4: switch_port@4 {
+				reg = <4>;
+				ethernet = <&enetc_psi1>;
+				phy-connection-type = "internal";
+				status = "disabled";
+			};
 		};
 	};
 
@@ -976,6 +1019,30 @@
 		#size-cells = <0>;
 	};
 
+	usdhc1: usdhc@2850000 {
+		compatible = "nxp,imx-usdhc";
+		reg = <0x2850000 0x4000>;
+		status = "disabled";
+		interrupts = <86 0>;
+		clocks = <&ccm IMX_CCM_USDHC1_CLK 0 0>;
+		max-current-330 = <1020>;
+		max-current-180 = <1020>;
+		max-bus-freq = <208000000>;
+		min-bus-freq = <400000>;
+	};
+
+	usdhc2: usdhc@2860000 {
+		compatible = "nxp,imx-usdhc";
+		reg = <0x2860000 0x4000>;
+		status = "disabled";
+		interrupts = <87 0>;
+		clocks = <&ccm IMX_CCM_USDHC2_CLK 0 0>;
+		max-current-330 = <1020>;
+		max-current-180 = <1020>;
+		max-bus-freq = <208000000>;
+		min-bus-freq = <400000>;
+	};
+
 	edma3: dma-controller@4000000 {
 		#dma-cells = <2>;
 		compatible = "nxp,mcux-edma";
@@ -1027,6 +1094,8 @@
 		interrupts = <16 3>;
 		status = "disabled";
 		clocks = <&ccm IMX_CCM_LPSPI0102_CLK 0x6c 0>;
+		tx-fifo-size = <16>;
+		rx-fifo-size = <16>;
 		#address-cells = <1>;
 		#size-cells = <0>;
 	};
@@ -1037,6 +1106,8 @@
 		interrupts = <17 3>;
 		status = "disabled";
 		clocks = <&ccm IMX_CCM_LPSPI0102_CLK 0x6c 2>;
+		tx-fifo-size = <16>;
+		rx-fifo-size = <16>;
 		#address-cells = <1>;
 		#size-cells = <0>;
 	};
@@ -1047,6 +1118,8 @@
 		interrupts = <65 3>;
 		status = "disabled";
 		clocks = <&ccm IMX_CCM_LPSPI0304_CLK 0x6c 4>;
+		tx-fifo-size = <16>;
+		rx-fifo-size = <16>;
 		#address-cells = <1>;
 		#size-cells = <0>;
 	};
@@ -1057,6 +1130,8 @@
 		interrupts = <66 3>;
 		status = "disabled";
 		clocks = <&ccm IMX_CCM_LPSPI0304_CLK 0x6c 6>;
+		tx-fifo-size = <16>;
+		rx-fifo-size = <16>;
 		#address-cells = <1>;
 		#size-cells = <0>;
 	};
@@ -1067,6 +1142,8 @@
 		interrupts = <194 3>;
 		status = "disabled";
 		clocks = <&ccm IMX_CCM_LPSPI0506_CLK 0x6c 6>;
+		tx-fifo-size = <16>;
+		rx-fifo-size = <16>;
 		#address-cells = <1>;
 		#size-cells = <0>;
 	};
@@ -1077,6 +1154,8 @@
 		interrupts = <195 3>;
 		status = "disabled";
 		clocks = <&ccm IMX_CCM_LPSPI0506_CLK 0x6c 6>;
+		tx-fifo-size = <16>;
+		rx-fifo-size = <16>;
 		#address-cells = <1>;
 		#size-cells = <0>;
 	};
@@ -1130,15 +1209,47 @@
 		clk-source = <1>;
 		clk-divider = <1>;
 	};
+
+	usb1: usbd@2c80000 {
+		compatible = "nxp,ehci";
+		reg = <0x2c80000 0x1000>;
+		interrupts = <215 0>;
+		interrupt-names = "usb_otg";
+		clocks = <&usbclk>;
+		num-bidir-endpoints = <8>;
+		status = "disabled";
+	};
+
+	usb2: usbd@2c90000 {
+		compatible = "nxp,ehci";
+		reg = <0x2c90000 0x1000>;
+		interrupts = <214 0>;
+		interrupt-names = "usb_otg";
+		clocks = <&usbclk>;
+		num-bidir-endpoints = <8>;
+		status = "disabled";
+	};
+
+	usbphy1: usbphy@2ca0000 {
+		compatible = "nxp,usbphy";
+		reg = <0x2ca0000 0x1000>;
+		status = "disabled";
+	};
+
+	usbphy2: usbphy@2cb0000 {
+		compatible = "nxp,usbphy";
+		reg = <0x2cb0000 0x1000>;
+		status = "disabled";
+	};
 };
 
 &flexspi {
-		compatible = "nxp,imx-flexspi";
-		interrupts = <55 0>;
-		#address-cells = <1>;
-		#size-cells = <0>;
-		status = "disabled";
-		clocks = <&ccm IMX_CCM_FLEXSPI_CLK 0x0 0>;
+	compatible = "nxp,imx-flexspi";
+	interrupts = <55 0>;
+	#address-cells = <1>;
+	#size-cells = <0>;
+	status = "disabled";
+	clocks = <&ccm IMX_CCM_FLEXSPI_CLK 0x0 0>;
 };
 
 &flexspi2 {

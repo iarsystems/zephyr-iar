@@ -14,8 +14,11 @@ toolchain:
   - zephyr
   - gnuarmemb
 supported:
+  - counter
   - gpio
   - i2c
   - uart
   - spi
+  - adc
+  - usb_device
 vendor: nxp

@@ -725,11 +725,11 @@ static int set_available_contexts(void)
 int main(void)
 {
 	struct bt_le_ext_adv *adv;
-	const struct bt_bap_pacs_register_param pacs_param = {
+	const struct bt_pacs_register_param pacs_param = {
 		.snk_pac = true,
 		.snk_loc = true,
 		.src_pac = true,
-		.src_loc = true
+		.src_loc = true,
 	};
 	int err;
 
@@ -778,7 +778,7 @@ int main(void)
 	}
 
 	/* Create a connectable advertising set */
-	err = bt_le_ext_adv_create(BT_LE_EXT_ADV_CONN, NULL, &adv);
+	err = bt_le_ext_adv_create(BT_BAP_ADV_PARAM_CONN_QUICK, NULL, &adv);
 	if (err) {
 		printk("Failed to create advertising set (err %d)\n", err);
 		return 0;

@@ -122,7 +122,7 @@ config HWINFO_MCUX_SYSCON
 config HWINFO_IMXRT
 	bool "NXP i.mx RT device ID"
 	default y
-	depends on SOC_SERIES_IMXRT10XX || SOC_SERIES_IMXRT11XX
+	depends on SOC_SERIES_IMXRT10XX || SOC_SERIES_IMXRT11XX || SOC_SERIES_IMXRT118X
 	select HWINFO_HAS_DRIVER
 	help
 	  Enable NXP i.mx RT hwinfo driver.
@@ -263,5 +263,22 @@ config HWINFO_NUMAKER_RMC
 	select HAS_NUMAKER_RMC
 	help
 	  Enable Nuvoton NuMaker hwinfo driver backed up by RMC
+
+config HWINFO_MAX32
+	bool "MAX32 hwinfo"
+	default y
+	depends on SOC_FAMILY_MAX32
+	depends on !TRUSTED_EXECUTION_NONSECURE
+	select HWINFO_HAS_DRIVER
+	help
+	  Enable MAX32 hwinfo driver.
+
+config HWINFO_RENESAS_RA
+	bool "Renesas RA device ID"
+	default y
+	depends on SOC_FAMILY_RENESAS_RA
+	select HWINFO_HAS_DRIVER
+	help
+	  Enable RENESAS RA hwinfo driver
 
 endif

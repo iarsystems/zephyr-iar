@@ -124,18 +124,38 @@ enum net_verdict {
 int net_recv_data(struct net_if *iface, struct net_pkt *pkt);
 
 /**
- * @brief Send data to network.
+ * @brief Try sending data to network.
  *
  * @details Send data to network. This should not be used normally by
  * applications as it requires that the network packet is properly
  * constructed.
  *
  * @param pkt Network packet.
+ * @param timeout Timeout for send.
  *
  * @return 0 if ok, <0 if error. If <0 is returned, then the caller needs
  * to unref the pkt in order to avoid memory leak.
  */
-int net_send_data(struct net_pkt *pkt);
+int net_try_send_data(struct net_pkt *pkt, k_timeout_t timeout);
+
+/**
+ * @brief Send data to network.
+ *
+ * @details Send data to network. This should not be used normally by
+ * applications as it requires that the network packet is properly
+ * constructed. Equivalent to net_try_send_data with infinite timeout.
+ *
+ * @param pkt Network packet.
+ *
+ * @return 0 if ok, <0 if error. If <0 is returned, then the caller needs
+ * to unref the pkt in order to avoid memory leak.
+ */
+static inline int net_send_data(struct net_pkt *pkt)
+{
+	k_timeout_t timeout = k_is_in_isr() ? K_NO_WAIT : K_FOREVER;
+
+	return net_try_send_data(pkt, timeout);
+}
 
 /** @cond INTERNAL_HIDDEN */
 
@@ -169,7 +189,14 @@ struct net_l3_register {
 	const char * const name;
 	/** What L2 layer this is for */
 	const struct net_l2 * const l2;
-	/** Handler function for the given protocol type */
+	/** Handler function for the specified protocol type. If the handler
+	 * has taken ownership of the pkt, it must return NET_OK. If it wants to
+	 * continue processing at the next level (e.g. ipv4), it must return
+	 * NET_CONTINUE. If instead something is wrong with the packet (for
+	 * example, a multicast address that does not match the protocol type)
+	 * it must return NET_DROP so that the statistics can be updated
+	 * accordingly
+	 */
 	enum net_verdict (*handler)(struct net_if *iface,
 				    uint16_t ptype,
 				    struct net_pkt *pkt);

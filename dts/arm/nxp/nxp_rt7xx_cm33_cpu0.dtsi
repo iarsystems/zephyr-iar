@@ -6,6 +6,7 @@
 
 #include <mem.h>
 #include <arm/armv8-m.dtsi>
+#include <zephyr/dt-bindings/adc/adc.h>
 #include <zephyr/dt-bindings/clock/mcux_lpc_syscon_clock.h>
 #include <zephyr/dt-bindings/gpio/gpio.h>
 #include <zephyr/dt-bindings/memory-attr/memory-attr-arm.h>
@@ -55,6 +56,13 @@
 
 	pinctrl: pinctrl {
 		compatible = "nxp,rt-iocon-pinctrl";
+	};
+
+	/* USB PLL */
+	usbclk: usbpll-clock {
+		compatible = "fixed-clock";
+		clock-frequency = <24000000>;
+		#clock-cells = <0>;
 	};
 };
 
@@ -107,6 +115,22 @@
 	 * and secure modes (0x50000000).
 	 */
 
+	lpadc0: adc@20c000 {
+		compatible = "nxp,lpc-lpadc";
+		reg = <0x20c000 0x304>;
+		interrupts = <15 0>;
+		status = "disabled";
+		clk-divider = <1>;
+		clk-source = <0>;
+		voltage-ref= <1>;
+		calibration-average = <128>;
+		power-level = <0>;
+		offset-value-a = <10>;
+		offset-value-b = <10>;
+		#io-channel-cells = <1>;
+		clocks = <&clkctl3 MCUX_LPADC1_CLK>;
+	};
+
 	rstctl0: reset@0 {
 		compatible = "nxp,rstctl";
 		reg = <0x0 0x1000>;
@@ -153,6 +177,66 @@
 		compatible = "nxp,lpc-syscon";
 		reg = <0xa1000 0x1000>;
 		#clock-cells = <1>;
+	};
+
+	ctimer0: ctimer@28000 {
+		compatible = "nxp,lpc-ctimer";
+		reg = <0x28000 0x1000>;
+		interrupts = <3 0>;
+		status = "disabled";
+		clk-source = <1>;
+		clocks = <&clkctl0 MCUX_CTIMER0_CLK>;
+		mode = <0>;
+		input = <0>;
+		prescale = <0>;
+	};
+
+	ctimer1: ctimer@29000 {
+		compatible = "nxp,lpc-ctimer";
+		reg = <0x29000 0x1000>;
+		interrupts = <4 0>;
+		status = "disabled";
+		clk-source = <1>;
+		clocks = <&clkctl0 MCUX_CTIMER1_CLK>;
+		mode = <0>;
+		input = <0>;
+		prescale = <0>;
+	};
+
+	ctimer2: ctimer@2a000 {
+		compatible = "nxp,lpc-ctimer";
+		reg = <0x2a000 0x1000>;
+		interrupts = <32 0>;
+		status = "disabled";
+		clk-source = <1>;
+		clocks = <&clkctl0 MCUX_CTIMER2_CLK>;
+		mode = <0>;
+		input = <0>;
+		prescale = <0>;
+	};
+
+	ctimer3: ctimer@2b000 {
+		compatible = "nxp,lpc-ctimer";
+		reg = <0x2b000 0x1000>;
+		interrupts = <6 0>;
+		status = "disabled";
+		clk-source = <1>;
+		clocks = <&clkctl0 MCUX_CTIMER3_CLK>;
+		mode = <0>;
+		input = <0>;
+		prescale = <0>;
+	};
+
+	ctimer4: ctimer@2c000 {
+		compatible = "nxp,lpc-ctimer";
+		reg = <0x2c000 0x1000>;
+		interrupts = <33 0>;
+		status = "disabled";
+		clk-source = <1>;
+		clocks = <&clkctl0 MCUX_CTIMER4_CLK>;
+		mode = <0>;
+		input = <0>;
+		prescale = <0>;
 	};
 
 	edma0: dma-controller@140000 {
@@ -324,14 +408,18 @@
 			clocks = <&clkctl0 MCUX_FLEXCOMM0_CLK>;
 			status = "disabled";
 		};
+
 		flexcomm0_lpspi0: spi@110000 {
 			compatible = "nxp,lpspi";
 			reg = <0x110000 0x1000>;
 			clocks = <&clkctl0 MCUX_FLEXCOMM0_CLK>;
 			#address-cells = <1>;
 			#size-cells = <0>;
+			tx-fifo-size = <8>;
+			rx-fifo-size = <8>;
 			status = "disabled";
 		};
+
 		flexcomm0_lpi2c0: lpi2c@110800 {
 			compatible = "nxp,lpi2c";
 			reg = <0x110800 0x1000>;
@@ -359,14 +447,18 @@
 			clocks = <&clkctl0 MCUX_FLEXCOMM1_CLK>;
 			status = "disabled";
 		};
+
 		flexcomm1_lpspi1: spi@111000 {
 			compatible = "nxp,lpspi";
 			reg = <0x111000 0x1000>;
 			clocks = <&clkctl0 MCUX_FLEXCOMM1_CLK>;
 			#address-cells = <1>;
 			#size-cells = <0>;
+			tx-fifo-size = <8>;
+			rx-fifo-size = <8>;
 			status = "disabled";
 		};
+
 		flexcomm1_lpi2c1: lpi2c@111800 {
 			compatible = "nxp,lpi2c";
 			reg = <0x111800 0x1000>;
@@ -394,14 +486,18 @@
 			clocks = <&clkctl0 MCUX_FLEXCOMM2_CLK>;
 			status = "disabled";
 		};
+
 		flexcomm2_lpspi2: spi@112000 {
 			compatible = "nxp,lpspi";
 			reg = <0x112000 0x1000>;
 			clocks = <&clkctl0 MCUX_FLEXCOMM2_CLK>;
 			#address-cells = <1>;
 			#size-cells = <0>;
+			tx-fifo-size = <8>;
+			rx-fifo-size = <8>;
 			status = "disabled";
 		};
+
 		flexcomm2_lpi2c2: lpi2c@112800 {
 			compatible = "nxp,lpi2c";
 			reg = <0x112800 0x1000>;
@@ -429,14 +525,18 @@
 			clocks = <&clkctl0 MCUX_FLEXCOMM3_CLK>;
 			status = "disabled";
 		};
+
 		flexcomm3_lpspi3: spi@113000 {
 			compatible = "nxp,lpspi";
 			reg = <0x113000 0x1000>;
 			clocks = <&clkctl0 MCUX_FLEXCOMM3_CLK>;
 			#address-cells = <1>;
 			#size-cells = <0>;
+			tx-fifo-size = <8>;
+			rx-fifo-size = <8>;
 			status = "disabled";
 		};
+
 		flexcomm3_lpi2c3: lpi2c@113800 {
 			compatible = "nxp,lpi2c";
 			reg = <0x113800 0x1000>;
@@ -464,14 +564,18 @@
 			clocks = <&clkctl0 MCUX_FLEXCOMM4_CLK>;
 			status = "disabled";
 		};
+
 		flexcomm4_lpspi4: spi@171000 {
 			compatible = "nxp,lpspi";
 			reg = <0x171000 0x1000>;
 			clocks = <&clkctl0 MCUX_FLEXCOMM4_CLK>;
 			#address-cells = <1>;
 			#size-cells = <0>;
+			tx-fifo-size = <8>;
+			rx-fifo-size = <8>;
 			status = "disabled";
 		};
+
 		flexcomm4_lpi2c4: lpi2c@171800 {
 			compatible = "nxp,lpi2c";
 			reg = <0x171800 0x1000>;
@@ -499,14 +603,18 @@
 			clocks = <&clkctl0 MCUX_FLEXCOMM5_CLK>;
 			status = "disabled";
 		};
+
 		flexcomm5_lpspi5: spi@172000 {
 			compatible = "nxp,lpspi";
 			reg = <0x172000 0x1000>;
 			clocks = <&clkctl0 MCUX_FLEXCOMM5_CLK>;
 			#address-cells = <1>;
 			#size-cells = <0>;
+			tx-fifo-size = <8>;
+			rx-fifo-size = <8>;
 			status = "disabled";
 		};
+
 		flexcomm5_lpi2c5: lpi2c@172800 {
 			compatible = "nxp,lpi2c";
 			reg = <0x172800 0x1000>;
@@ -534,14 +642,18 @@
 			clocks = <&clkctl0 MCUX_FLEXCOMM6_CLK>;
 			status = "disabled";
 		};
+
 		flexcomm6_lpspi6: spi@173000 {
 			compatible = "nxp,lpspi";
 			reg = <0x173000 0x1000>;
 			clocks = <&clkctl0 MCUX_FLEXCOMM6_CLK>;
 			#address-cells = <1>;
 			#size-cells = <0>;
+			tx-fifo-size = <8>;
+			rx-fifo-size = <8>;
 			status = "disabled";
 		};
+
 		flexcomm6_lpi2c6: lpi2c@173800 {
 			compatible = "nxp,lpi2c";
 			reg = <0x173800 0x1000>;
@@ -569,14 +681,18 @@
 			clocks = <&clkctl0 MCUX_FLEXCOMM7_CLK>;
 			status = "disabled";
 		};
+
 		flexcomm7_lpspi7: spi@174000 {
 			compatible = "nxp,lpspi";
 			reg = <0x174000 0x1000>;
 			clocks = <&clkctl0 MCUX_FLEXCOMM7_CLK>;
 			#address-cells = <1>;
 			#size-cells = <0>;
+			tx-fifo-size = <8>;
+			rx-fifo-size = <8>;
 			status = "disabled";
 		};
+
 		flexcomm7_lpi2c7: lpi2c@174800 {
 			compatible = "nxp,lpi2c";
 			reg = <0x174800 0x1000>;
@@ -604,14 +720,18 @@
 			clocks = <&clkctl0 MCUX_FLEXCOMM8_CLK>;
 			status = "disabled";
 		};
+
 		flexcomm8_lpspi8: spi@199000 {
 			compatible = "nxp,lpspi";
 			reg = <0x199000 0x1000>;
 			clocks = <&clkctl0 MCUX_FLEXCOMM8_CLK>;
 			#address-cells = <1>;
 			#size-cells = <0>;
+			tx-fifo-size = <8>;
+			rx-fifo-size = <8>;
 			status = "disabled";
 		};
+
 		flexcomm8_lpi2c8: lpi2c@199800 {
 			compatible = "nxp,lpi2c";
 			reg = <0x199800 0x1000>;
@@ -639,14 +759,18 @@
 			clocks = <&clkctl0 MCUX_FLEXCOMM9_CLK>;
 			status = "disabled";
 		};
+
 		flexcomm9_lpspi9: spi@19a000 {
 			compatible = "nxp,lpspi";
 			reg = <0x19a000 0x1000>;
 			clocks = <&clkctl0 MCUX_FLEXCOMM9_CLK>;
 			#address-cells = <1>;
 			#size-cells = <0>;
+			tx-fifo-size = <8>;
+			rx-fifo-size = <8>;
 			status = "disabled";
 		};
+
 		flexcomm9_lpi2c9: lpi2c@19a800 {
 			compatible = "nxp,lpi2c";
 			reg = <0x19a800 0x1000>;
@@ -674,14 +798,18 @@
 			clocks = <&clkctl0 MCUX_FLEXCOMM10_CLK>;
 			status = "disabled";
 		};
+
 		flexcomm10_lpspi10: spi@19b000 {
 			compatible = "nxp,lpspi";
 			reg = <0x19b000 0x1000>;
 			clocks = <&clkctl0 MCUX_FLEXCOMM10_CLK>;
 			#address-cells = <1>;
 			#size-cells = <0>;
+			tx-fifo-size = <8>;
+			rx-fifo-size = <8>;
 			status = "disabled";
 		};
+
 		flexcomm10_lpi2c10: lpi2c@19b800 {
 			compatible = "nxp,lpi2c";
 			reg = <0x19b800 0x1000>;
@@ -709,14 +837,18 @@
 			clocks = <&clkctl0 MCUX_FLEXCOMM11_CLK>;
 			status = "disabled";
 		};
+
 		flexcomm11_lpspi11: spi@19c000 {
 			compatible = "nxp,lpspi";
 			reg = <0x19c000 0x1000>;
 			clocks = <&clkctl0 MCUX_FLEXCOMM11_CLK>;
 			#address-cells = <1>;
 			#size-cells = <0>;
+			tx-fifo-size = <8>;
+			rx-fifo-size = <8>;
 			status = "disabled";
 		};
+
 		flexcomm11_lpi2c11: lpi2c@19c800 {
 			compatible = "nxp,lpi2c";
 			reg = <0x19c800 0x1000>;
@@ -744,14 +876,18 @@
 			clocks = <&clkctl0 MCUX_FLEXCOMM12_CLK>;
 			status = "disabled";
 		};
+
 		flexcomm12_lpspi12: spi@19d000 {
 			compatible = "nxp,lpspi";
 			reg = <0x19d000 0x1000>;
 			clocks = <&clkctl0 MCUX_FLEXCOMM12_CLK>;
 			#address-cells = <1>;
 			#size-cells = <0>;
+			tx-fifo-size = <8>;
+			rx-fifo-size = <8>;
 			status = "disabled";
 		};
+
 		flexcomm12_lpi2c12: lpi2c@19d800 {
 			compatible = "nxp,lpi2c";
 			reg = <0x19d800 0x1000>;
@@ -779,14 +915,18 @@
 			clocks = <&clkctl0 MCUX_FLEXCOMM13_CLK>;
 			status = "disabled";
 		};
+
 		flexcomm13_lpspi13: spi@19e000 {
 			compatible = "nxp,lpspi";
 			reg = <0x19e000 0x1000>;
 			clocks = <&clkctl0 MCUX_FLEXCOMM13_CLK>;
 			#address-cells = <1>;
 			#size-cells = <0>;
+			tx-fifo-size = <8>;
+			rx-fifo-size = <8>;
 			status = "disabled";
 		};
+
 		flexcomm13_lpi2c13: lpi2c@19e800 {
 			compatible = "nxp,lpi2c";
 			reg = <0x19e800 0x1000>;
@@ -805,6 +945,8 @@
 		clocks = <&clkctl4 MCUX_LPSPI14_CLK>;
 		#address-cells = <1>;
 		#size-cells = <0>;
+		tx-fifo-size = <8>;
+		rx-fifo-size = <8>;
 		status = "disabled";
 	};
 
@@ -828,8 +970,95 @@
 		clocks = <&clkctl4 MCUX_LPSPI16_CLK>;
 		#address-cells = <1>;
 		#size-cells = <0>;
+		tx-fifo-size = <8>;
+		rx-fifo-size = <8>;
 		status = "disabled";
 	};
+
+	usb0: usbd@418000 {
+		compatible = "nxp,ehci";
+		reg = <0x418000 0x1000>;
+		interrupts = <40 0>;
+		interrupt-names = "usb_otg";
+		clocks = <&usbclk>;
+		num-bidir-endpoints = <8>;
+		status = "disabled";
+	};
+
+	usb1: usbd@419000 {
+		compatible = "nxp,ehci";
+		reg = <0x419000 0x1000>;
+		interrupts = <41 0>;
+		interrupt-names = "usb_otg";
+		clocks = <&usbclk>;
+		num-bidir-endpoints = <8>;
+		status = "disabled";
+	};
+
+	usbphy: usbphy@414000 {
+		compatible = "nxp,usbphy";
+		reg = <0x414000 0x1000>;
+		status = "disabled";
+	};
+
+	mrt0: mrt@2d000 {
+		compatible = "nxp,mrt";
+		reg = <0x2d000 0x100>;
+		interrupts = <2 0>;
+		num-channels = <4>;
+		num-bits = <24>;
+		clocks = <&clkctl2 MCUX_MRT_CLK>;
+		resets = <&rstctl0 NXP_SYSCON_RESET(3, 26)>;
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		mrt0_channel0: mrt_channel@0 {
+			compatible = "nxp,mrt-channel";
+			reg = <0>;
+			status = "disabled";
+		};
+
+		mrt0_channel1: mrt_channel@1 {
+			compatible = "nxp,mrt-channel";
+			reg = <1>;
+			status = "disabled";
+		};
+
+		mrt0_channel2: mrt_channel@2 {
+			compatible = "nxp,mrt-channel";
+			reg = <2>;
+			status = "disabled";
+		};
+
+		mrt0_channel3: mrt_channel@3 {
+			compatible = "nxp,mrt-channel";
+			reg = <3>;
+			status = "disabled";
+		};
+	};
+
+	flexio: flexio@416000 {
+		compatible = "nxp,flexio";
+		reg = <0x416000 0x1000>;
+		status = "disabled";
+		interrupts = <55 0>;
+		clocks = <&clkctl4 MCUX_FLEXIO0_CLK>;
+	};
+
+	os_timer_cpu0: timers@207000 {
+		compatible = "nxp,os-timer";
+		reg = <0x207000 0x1000>;
+		interrupts = <34 0>;
+		status = "disabled";
+	};
+};
+
+&systick {
+	/*
+	 * RT700 cm33_cpu0 relies by default on the OS Timer for system
+	 * clock implementation, so the SysTick node is not to be enabled.
+	 */
+	status = "disabled";
 };
 
 &xspi0 {
