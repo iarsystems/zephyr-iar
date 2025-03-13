@@ -86,6 +86,27 @@
 			gpios = <&gpiog 9 GPIO_ACTIVE_LOW>;
 			zephyr,code = <INPUT_KEY_2>;
 		};
+
+		open_close_switch: switch_0 {
+			label = "OPEN/CLOSE SWITCH";
+			gpios = <&gpioi 11 GPIO_ACTIVE_HIGH>;
+			zephyr,code = <INPUT_KEY_3>;
+		};
+		interior_light_switch_on: switch_1 {
+			label = "ON";
+			gpios = <&gpioi 10 GPIO_ACTIVE_LOW>;
+			zephyr,code = <INPUT_KEY_4>;
+		};
+		interior_light_switch_auto: switch_2 {
+			label = "AUTO";
+			gpios = <&gpioi 9 GPIO_ACTIVE_LOW>;
+			zephyr,code = <INPUT_KEY_5>;
+		};
+		interior_light_switch_off: switch_3 {
+			label = "OFF";
+			gpios = <&gpioi 8 GPIO_ACTIVE_LOW>;
+			zephyr,code = <INPUT_KEY_6>;
+		};
 	};
 
 	aliases {
@@ -100,6 +121,10 @@
 		sw0 = &button0;
 		sw1 = &button1;
 		sw2 = &button2;
+		sw3 = &open_close_switch;
+		sw4 = &interior_light_switch_on;
+		sw5 = &interior_light_switch_auto;
+		sw6 = &interior_light_switch_off;
 	};
 
 	lvgl_pointer {
