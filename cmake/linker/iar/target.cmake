@@ -139,6 +139,7 @@ function(toolchain_ld_link_elf)
     --config=${TOOLCHAIN_LD_LINK_ELF_LINKER_SCRIPT}
     ${TOOLCHAIN_LD_LINK_ELF_LIBRARIES_POST_SCRIPT}
     --map=${TOOLCHAIN_LD_LINK_ELF_OUTPUT_MAP}
+    --log=initialization,veneers,sections
     --log_file=${TOOLCHAIN_LD_LINK_ELF_OUTPUT_MAP}.log
 
     ${ZEPHYR_LIBS_OBJECTS}

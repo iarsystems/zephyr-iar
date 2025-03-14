@@ -272,3 +272,5 @@ dt_comp_path(paths COMPATIBLE "zephyr,memory-region")
 foreach(path IN LISTS paths)
   zephyr_linker_dts_section(PATH ${path})
 endforeach()
+
+#zephyr_linker_symbol(SYMBOL _flash_used EXPR "LOADADDR(last_section) + SIZEOF(last_section) - __rom_region_start")

@@ -434,7 +434,9 @@ static inline char *K_KERNEL_STACK_BUFFER(k_thread_stack_t *sym)
  * @return Size of the stack buffer
  */
 #define K_THREAD_STACK_SIZEOF(sym)	(sizeof(sym) - K_THREAD_STACK_RESERVED)
-
+#if !defined(__IAR_SYSTEMS_ICC__)
+#define __no_init
+#endif
 /**
  * @brief Define a toplevel thread stack memory region in specified region
  *
@@ -464,7 +466,7 @@ static inline char *K_KERNEL_STACK_BUFFER(k_thread_stack_t *sym)
  * @param lsect Linker section for this stack
  */
 #define Z_THREAD_STACK_DEFINE_IN(sym, size, lsect) \
-	struct z_thread_stack_element lsect \
+__no_init struct z_thread_stack_element lsect \
 		__aligned(Z_THREAD_STACK_OBJ_ALIGN(size)) \
 		sym[K_THREAD_STACK_LEN(size)]
 
@@ -483,7 +485,7 @@ static inline char *K_KERNEL_STACK_BUFFER(k_thread_stack_t *sym)
  * @param lsect Linker section for this stack
  */
 #define Z_THREAD_STACK_ARRAY_DEFINE_IN(sym, nmemb, size, lsect) \
-	struct z_thread_stack_element lsect \
+__no_init struct z_thread_stack_element lsect \
 		__aligned(Z_THREAD_STACK_OBJ_ALIGN(size)) \
 		sym[nmemb][K_THREAD_STACK_LEN(size)]
 

@@ -11,6 +11,7 @@ if(CONFIG_IAR_DATA_INIT)
 endif()
 foreach(lang C CXX ASM)
   set(commands "--log modules,libraries,initialization,redirects,sections")
+  string(APPEND commands " --no_veneers") # to avoid veneers to k_object_fd in the earlier linker passes.
   set(CMAKE_${lang}_LINK_EXECUTABLE
   "<CMAKE_LINKER> <CMAKE_${lang}_LINK_FLAGS> <LINK_FLAGS> ${commands} <LINK_LIBRARIES> <OBJECTS> -o <TARGET>")
   set(commands)

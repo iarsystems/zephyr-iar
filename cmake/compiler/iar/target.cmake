@@ -66,6 +66,7 @@ list(APPEND IAR_COMMON_FLAGS
   "${ZEPHYR_BASE}/include/zephyr/toolchain/iar/iar_missing_defs.h"
   # Enable both IAR and GNU extensions
   -e
+  --vla
   --language gnu
   --do_explicit_init_in_named_sections
   --macro_positions_in_diagnostics
