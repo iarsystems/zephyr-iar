@@ -3,7 +3,7 @@
 # keep first
 board_runner_args(stm32cubeprogrammer "--port=swd" "--reset-mode=hw")
 board_runner_args(jlink "--device=STM32F429II" "--speed=4000")
-board_runner_args(pyocd "--target=stm32f429Ii")
+board_runner_args(pyocd "--target=stm32f429xi")
 board_runner_args(pyocd "--flash-opt=-O reset_type=hw")
 board_runner_args(pyocd "--flash-opt=-O connect_mode=under-reset")
 
