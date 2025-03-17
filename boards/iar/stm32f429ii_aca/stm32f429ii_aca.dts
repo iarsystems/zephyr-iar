@@ -296,6 +296,25 @@
 	};
 };
 
+&adc2 {
+	compatible = "st,stm32f4-adc", "st,stm32-adc";
+	pinctrl-0 = <&adc2_in6_pa6>;
+	pinctrl-names = "default";
+	st,adc-prescaler = <2>;
+	status = "okay";
+
+	#address-cells = <1>;
+	#size-cells = <0>;
+
+	channel@6 {
+		reg = <6>;
+		zephyr,gain = "ADC_GAIN_1";
+		zephyr,reference = "ADC_REF_INTERNAL";
+		zephyr,acquisition-time = <ADC_ACQ_TIME_DEFAULT>;
+		zephyr,resolution = <12>;
+	};
+};
+
 &ltdc {
 	pinctrl-0 = <&ltdc_r2_pc10 &ltdc_r3_pb0 &ltdc_r4_pa11 &ltdc_r5_pa12
 		     &ltdc_r6_pb1 &ltdc_r7_pg6 &ltdc_g2_pa6 &ltdc_g3_pg10
