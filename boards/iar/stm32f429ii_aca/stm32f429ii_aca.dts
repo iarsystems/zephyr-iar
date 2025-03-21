@@ -107,6 +107,17 @@
 			gpios = <&gpioi 8 GPIO_ACTIVE_LOW>;
 			zephyr,code = <INPUT_KEY_6>;
 		};
+
+		cap_button0: cap_button_0 {
+			label = "CAP_BUT0";
+			gpios = <&gpioh 6 GPIO_ACTIVE_LOW>;
+			zephyr,code = <INPUT_KEY_7>;
+		};
+		cap_button1: cap_button_1 {
+			label = "CAP_BUT1";
+			gpios = <&gpioh 7 GPIO_ACTIVE_LOW>;
+			zephyr,code = <INPUT_KEY_8>;
+		};
 	};
 
 	aliases {
@@ -125,6 +136,8 @@
 		sw4 = &interior_light_switch_on;
 		sw5 = &interior_light_switch_auto;
 		sw6 = &interior_light_switch_off;
+		sw7 = &cap_button0;
+		sw8 = &cap_button1;
 	};
 
 	lvgl_pointer {
