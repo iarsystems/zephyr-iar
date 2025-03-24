@@ -328,6 +328,12 @@
 	};
 };
 
+&dac1 {
+	pinctrl-0 = <&dac_out2_pa5>;
+	pinctrl-names = "default";
+	status = "okay";
+};
+
 &ltdc {
 	pinctrl-0 = <&ltdc_r2_pc10 &ltdc_r3_pb0 &ltdc_r4_pa11 &ltdc_r5_pa12
 		     &ltdc_r6_pb1 &ltdc_r7_pg6 &ltdc_g2_pa6 &ltdc_g3_pg10
