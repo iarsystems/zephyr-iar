@@ -7,13 +7,12 @@
 
 /dts-v1/;
 #include <st/f4/stm32f429Xi.dtsi>
-#include <st/f4/stm32f429zitx-pinctrl.dtsi>
-#include <zephyr/dt-bindings/display/ili9xxx.h>
+#include <st/f4/stm32f429iitx-pinctrl.dtsi>
 #include <zephyr/dt-bindings/input/input-event-codes.h>
 
 / {
 	model = "IAR STM32F429II-ACA board";
-	compatible = "st,stm32f4discovery";
+	compatible = "iar,stm32f429ii-aca";
 
 	chosen {
 		zephyr,console = &usart1;
@@ -139,48 +138,6 @@
 		sw7 = &cap_button0;
 		sw8 = &cap_button1;
 	};
-
-	lvgl_pointer {
-		compatible = "zephyr,lvgl-pointer-input";
-		input = <&stmpe811>;
-	};
-
-	mipi_dbi {
-		compatible = "zephyr,mipi-dbi-spi";
-		dc-gpios = <&gpiod 13 GPIO_ACTIVE_HIGH>;
-		write-only;
-		#address-cells = <1>;
-		#size-cells = <0>;
-		spi-dev = <&spi5>;
-
-		ili9341: ili9341@0 {
-			compatible = "ilitek,ili9341";
-			mipi-max-frequency = <5625000>;
-			reg = <0>;
-			width = <240>;
-			height = <320>;
-			rotation = <180>;
-			pixel-format = <ILI9XXX_PIXEL_FORMAT_RGB565>;
-			pwctrla = [39 2c 00 34 02];
-			pwctrlb = [00 c1 30];
-			timctrla = [85 00 78];
-			timctrlb = [00 00];
-			pwseqctrl = [64 03 12 81];
-			pumpratioctrl = [20];
-			disctrl = [08 82 27 04];
-			vmctrl1 = [45 15];
-			vmctrl2 = [90];
-			enable3g = [00];
-			ifctl = [01 00 06];
-			ifmode = [c2];
-			gamset = [01];
-			frmctr1 = [00 1b];
-			pwctrl1 = [10];
-			pwctrl2 = [10];
-			pgamctrl = [0F 29 24 0c 0e 09 4e 78 3c 09 13 05 17 11 00];
-			ngamctrl = [00 16 1b 04 11 07 31 33 42 05 0c 0a 28 2f 0f];
-		};
-	};
 };
 
 &clk_lsi {
@@ -241,25 +198,6 @@
 	pinctrl-names = "default";
 	status = "okay";
 	clock-frequency = <I2C_BITRATE_FAST>;
-
-	stmpe811: stmpe811@41 {
-		compatible = "st,stmpe811";
-		status = "okay";
-		reg = <0x41>;
-		int-gpios = <&gpioa 15 GPIO_ACTIVE_LOW>;
-		screen-width = <240>;
-		screen-height = <320>;
-		raw-x-min = <240>;
-		raw-y-min = <200>;
-		raw-x-max = <3680>;
-		raw-y-max = <3800>;
-		panel-driver-settling-time-us = <1000>;
-		touch-detect-delay-us = <5000>;
-		touch-average-control = <8>;
-		tracking-index = <127>;
-		inverted-x;
-		inverted-y;
-	};
 };
 
 &spi5 {
@@ -332,39 +270,6 @@
 	pinctrl-0 = <&dac_out2_pa5>;
 	pinctrl-names = "default";
 	status = "okay";
-};
-
-&ltdc {
-	pinctrl-0 = <&ltdc_r2_pc10 &ltdc_r3_pb0 &ltdc_r4_pa11 &ltdc_r5_pa12
-		     &ltdc_r6_pb1 &ltdc_r7_pg6 &ltdc_g2_pa6 &ltdc_g3_pg10
-		     &ltdc_g4_pb10 &ltdc_g5_pb11 &ltdc_g6_pc7 &ltdc_g7_pd3
-		     &ltdc_b2_pd6 &ltdc_b3_pg11 &ltdc_b4_pg12 &ltdc_b5_pa3
-		     &ltdc_b6_pb8 &ltdc_b7_pb9 &ltdc_de_pf10 &ltdc_clk_pg7
-		     &ltdc_hsync_pc6 &ltdc_vsync_pa4>;
-	pinctrl-names = "default";
-	ext-sdram = <&sdram2>;
-	display-controller = <&ili9341>;
-	status = "okay";
-
-	width = <240>;
-	height = <320>;
-	pixel-format = <PANEL_PIXEL_FORMAT_RGB_565>;
-	display-timings {
-		compatible = "zephyr,panel-timing";
-		de-active = <0>;
-		pixelclk-active = <0>;
-		hsync-active = <0>;
-		vsync-active = <0>;
-		hsync-len = <10>;
-		vsync-len = <2>;
-		hback-porch= <20>;
-		vback-porch = <2>;
-		hfront-porch = <10>;
-		vfront-porch = <4>;
-	};
-	def-back-color-red = <0xFF>;
-	def-back-color-green = <0xFF>;
-	def-back-color-blue = <0xFF>;
 };
 
 zephyr_udc0: &usbotg_hs {
