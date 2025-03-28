@@ -16,8 +16,6 @@
 	compatible = "iar,stm32f429ii-aca";
 
 	chosen {
-		zephyr,console = &usart1;
-		zephyr,shell-uart = &usart1;
 		zephyr,sram = &sram0;
 		zephyr,flash = &flash0;
 		zephyr,ccm = &ccm0;
@@ -165,13 +163,6 @@
 	ahb-prescaler = <1>;
 	apb1-prescaler = <4>;
 	apb2-prescaler = <2>;
-};
-
-&usart1 {
-	pinctrl-0 = <&usart1_tx_pa9 &usart1_rx_pa10>;
-	pinctrl-names = "default";
-	current-speed = <115200>;
-	status = "okay";
 };
 
 &rtc {
