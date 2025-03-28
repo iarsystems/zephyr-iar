@@ -172,25 +172,19 @@
 };
 
 &i2c1 {
-	pinctrl-0 = <&i2c1_scl_pb8 &i2c1_sda_pb9>;
+	pinctrl-0 = <&i2c1_scl_pb8 &i2c1_sda_pb7>;
 	pinctrl-names = "default";
 	status = "okay";
 	clock-frequency = <I2C_BITRATE_FAST>;
 };
 
 &i2c2 {
-	pinctrl-0 = <&i2c2_scl_pb10 &i2c2_sda_pb11>;
+	pinctrl-0 = <&i2c2_scl_ph4 &i2c2_sda_ph5>;
 	pinctrl-names = "default";
 	status = "okay";
 	clock-frequency = <I2C_BITRATE_FAST>;
 };
 
-&i2c3 {
-	pinctrl-0 = <&i2c3_scl_pa8 &i2c3_sda_pc9>;
-	pinctrl-names = "default";
-	status = "okay";
-	clock-frequency = <I2C_BITRATE_FAST>;
-};
 
 &spi5 {
 	pinctrl-0 = <&spi5_nss_pf6 &spi5_sck_pf7
@@ -203,8 +197,8 @@
 &fmc {
 	status = "okay";
 	pinctrl-0 = <&fmc_nbl0_pe0 &fmc_nbl1_pe1
-		     &fmc_sdclk_pg8 &fmc_sdnwe_pc0 &fmc_sdcke1_pb5
-		     &fmc_sdne1_pb6 &fmc_sdnras_pf11 &fmc_sdncas_pg15
+		     &fmc_sdclk_pg8 &fmc_sdnwe_pc0 &fmc_sdcke0_pc3
+		     &fmc_sdne0_pc2 &fmc_sdnras_pf11 &fmc_sdncas_pg15
 		     &fmc_a0_pf0 &fmc_a1_pf1 &fmc_a2_pf2 &fmc_a3_pf3
 		     &fmc_a4_pf4 &fmc_a5_pf5 &fmc_a6_pf12 &fmc_a7_pf13
 		     &fmc_a8_pf14 &fmc_a9_pf15 &fmc_a10_pg0 &fmc_a11_pg1
