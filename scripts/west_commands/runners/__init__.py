@@ -29,6 +29,7 @@ _names = [
     'blackmagicprobe',
     'bossac',
     'canopen_program',
+    'cspy',
     'dediprog',
     'dfu',
     'ecpprog',
