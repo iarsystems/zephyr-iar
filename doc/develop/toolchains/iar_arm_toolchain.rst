@@ -35,14 +35,14 @@ For example:
 
    Known limitations:
 
-   - The IAR Toolchain uses ``ilink`` for linking and depends on Zephyr’s CMAKE_LINKER_GENERATOR. ``ilink`` is incompatible with Zephyr’s linker script template, which works with GNU ld. 
+   - The IAR Toolchain uses ``ilink`` for linking and depends on Zephyr’s CMAKE_LINKER_GENERATOR. ``ilink`` is incompatible with Zephyr’s linker script template, which works with GNU ld.
 
    - The GNU Assembler distributed with the Zephyr SDK is used for ``.S-files``.
 
    - C library support for ``Minimal libc`` only. C++ is not supported.
 
    - Some Zephyr subsystems or modules may contain C or assembly code that relies on GNU intrinsics and have not yet been updated to work fully with ``iar``.
-   
+
    - TrustedFirmware is not supported
 
 .. _IAR Arm Toolchain: https://www.iar.com/products/architectures/arm/
