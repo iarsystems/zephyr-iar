@@ -470,6 +470,12 @@ function(section_to_string)
     set(part)
   endif()
 
+  # Now type may have some different values:
+  # BSS, NOLOAD, or other things.
+  # BSS an NOLOAD should be noinit.
+  if("${type}" STREQUAL "BSS" OR "${type}" STREQUAL "NOLOAD")
+    set(noinit "1")
+  endif()
 
   set_property(GLOBAL PROPERTY ILINK_CURRENT_SECTIONS)
 
