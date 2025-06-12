@@ -49,6 +49,14 @@ config IAR_BUFFERED_WRITE
 	  this option uses a buffer to print a line
 	  at a time instead, increasing speed of printout.
 
+config IAR_USE_FORCE_DO_NOT_INIT
+  bool "use force do not initialize in linker scripts"
+	default n
+	help
+		Enable this to use force do not initialize { ... }
+		in the generated linker scripts. If unset, force will still be used
+		if the version check works.
+
 endmenu
 
 config TOOLCHAIN_IAR_SUPPORTS_THREAD_LOCAL_STORAGE
