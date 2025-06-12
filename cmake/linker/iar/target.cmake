@@ -41,6 +41,14 @@ macro(configure_linker_script linker_script_gen linker_pass_define)
   else()
     set(IAR_LIB_USED "")
   endif()
+
+  # for things later than ewarm 9.70.1 we have force do not initialize...
+  # message("=============>${pass_define} CMAKE_C_LINKER_VERSION is ${CMAKE_C_COMPILER_LINKER_VERSION}  or ${CMAKE_C_COMPILER_VERSION}")
+  if(CONFIG_IAR_USE_FORCE_DO_NOT_INIT OR
+    ( CMAKE_C_COMPILER_ID STREQUAL "iccarm" AND ${CMAKE_C_COMPILER_VERSION} VERSION_GREATER "9.70.1" ))
+    zephyr_linker_include_var(VAR CONFIG_IAR_USE_FORCE_DO_NOT_INIT VALUE "1")
+  endif()
+
   zephyr_linker_generate_linker_settings_file(${cmake_linker_script_settings})
 
   #The concept of "the previously built pass" is somewhat elusive:

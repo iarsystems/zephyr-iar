@@ -8,6 +8,19 @@ set(SORT_TYPE_NAME Lexical)
 
 set_property(GLOBAL PROPERTY ILINK_REGION_SYMBOL_ICF)
 
+
+function(do_not_initialize)
+  cmake_parse_arguments(DNI "" "DEST" "ITEMS" ${ARGN})
+  if(CONFIG_IAR_USE_FORCE_DO_NOT_INIT)
+    set(FORCE "force ")
+  else()
+    set(FORCE "")
+  endif()
+
+  list(JOIN DNI_ITEMS ", " SEL)
+  set(${DNI_DEST} "${FORCE}do not initialize { ${SEL} };\n" PARENT_SCOPE)
+endfunction()
+
 # This function post process the region for easier use.
 #
 # Tasks:
@@ -406,12 +419,8 @@ function(group_to_string)
       get_property(current_sections GLOBAL PROPERTY ILINK_CURRENT_SECTIONS)
       if(${name} STREQUAL .bss)
         if(DEFINED current_sections)
-          set(${STRING_STRING} "${${STRING_STRING}}do not initialize\n")
-          set(${STRING_STRING} "${${STRING_STRING}}{\n")
-          foreach(section ${current_sections})
-            set(${STRING_STRING} "${${STRING_STRING}}  ${section},\n")
-          endforeach()
-          set(${STRING_STRING} "${${STRING_STRING}}};\n")
+          do_not_initialize(DEST no_init_clause ITEMS "${current_sections}")
+          string(APPEND ${STRING_STRING} "${no_init_clause}")
           set(current_sections)
           set_property(GLOBAL PROPERTY ILINK_CURRENT_SECTIONS)
         endif()
@@ -809,12 +818,12 @@ function(section_to_string)
   #   set_property(GLOBAL APPEND PROPERTY ILINK_CURRENT_SECTIONS "section ${end_symbol}")
   # endforeach()
 
-  set(TEMP "${TEMP}\n};")
+  set(TEMP "${TEMP}\n};\n")
 
   get_property(current_sections GLOBAL PROPERTY ILINK_CURRENT_SECTIONS)
   if(${noinit})
-    list(JOIN current_sections ", " SELECTORS)
-    set(TEMP "${TEMP}\ndo not initialize {\n${SELECTORS}\n};")
+    do_not_initialize(DEST no_init_clause ITEMS "${current_sections}")
+    string(APPEND TEMP "${no_init_clause}")
   elseif(DEFINED group_parent_vma AND DEFINED group_parent_lma)
     if(CONFIG_IAR_DATA_INIT AND DEFINED current_sections)
       set(TEMP "${TEMP}\ninitialize by copy\n")
