@@ -14,7 +14,7 @@ menu "IAR options"
 choice IAR_INIT
 	bool "Static initialization method"
 	depends on XIP
-	default IAR_ZEPHYR_INIT
+	default IAR_DATA_INIT
 
 config IAR_DATA_INIT
 	bool "IAR"
