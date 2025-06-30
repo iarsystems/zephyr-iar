@@ -6,6 +6,8 @@ cmake_minimum_required(VERSION 3.17)
 
 set(SORT_TYPE_NAME Lexical)
 
+set(initprefix ".iar.init.")
+
 set_property(GLOBAL PROPERTY ILINK_REGION_SYMBOL_ICF)
 
 
@@ -131,16 +133,24 @@ function(process_region)
 
         set_property(GLOBAL PROPERTY ${section}_init_PARENT GROUP_${lma}) # TODO this will break sections directly in REGION
 
+	set_property(GLOBAL PROPERTY ${section}_init_NOINPUT "init")
+	set_property(GLOBAL PROPERTY ${section}_init_ORIGINAL_NAME "${name}")
+
         get_property(indicies GLOBAL PROPERTY ${section}_init_SETTINGS_INDICIES)
         foreach(idx ${indicies})
           get_property(input GLOBAL PROPERTY ${section}_init_SETTING_${idx}_INPUT)
           set(new_input)
           foreach(in ${input})
-            list(APPEND new_input ${in}_init)
+            list(APPEND new_input ${initprefix}${in}_init)
           endforeach()
           message(STATUS "input=${input}")
           set_property(GLOBAL PROPERTY ${section}_init_SETTING_${idx}_INPUT ${new_input})
           set_property(GLOBAL PROPERTY ${section}_init_SETTING_${idx}_SYMBOLS) # don't bring symbols
+	  get_property(sort GLOBAL PROPERTY ${section}_init_SETTING_${idx}_SORT)
+	  if(sort STREQUAL NAME)
+	    set_property(GLOBAL PROPERTY ${section}_init_SETTING_${idx}_SORT) # remove alphabetical order
+	  endif()
+
         endforeach()
 
 
@@ -389,7 +399,7 @@ function(place_in_region)
 
   set(result "\"${name}\": place in ${ILINK_CURRENT_NAME} { block ${name_clean} };\n")
   if(CONFIG_IAR_ZEPHYR_INIT AND DEFINED vma AND DEFINED lma AND (NOT ${noinit}) AND NOT ("${vma}" STREQUAL "${lma}") )
-    string(APPEND result "\"${name}_init\": place in ${lma} { block ${name_clean}_init };\n")
+    string(APPEND result "\"${name}_init\": place in ${lma} { block ${init_prefix}${name_clean}_init };\n")
   endif()
   set(${PLACE_STRING} "${result}" PARENT_SCOPE)
 endfunction()
@@ -511,6 +521,7 @@ function(section_to_string)
   get_property(min_size GLOBAL PROPERTY ${STRING_SECTION}_MIN_SIZE)
   get_property(max_size GLOBAL PROPERTY ${STRING_SECTION}_MAX_SIZE)
   get_property(noinput  GLOBAL PROPERTY ${STRING_SECTION}_NOINPUT)
+  get_property(original_name  GLOBAL PROPERTY ${STRING_SECTION}_ORIGINAL_NAME)
   get_property(noinit   GLOBAL PROPERTY ${STRING_SECTION}_NOINIT)
 
   get_property(nosymbols  GLOBAL PROPERTY ${STRING_SECTION}_NOSYMBOLS)
@@ -642,7 +653,7 @@ function(section_to_string)
   list(GET indicies -1 last_index)
   list(LENGTH indicies length)
 
-  if(NOT noinput)
+  if((NOT noinput) OR (noinput STREQUAL "init"))
 
     set(TEMP "${TEMP}\n  block ${name_clean}_winput")
     if(align)
@@ -663,7 +674,11 @@ function(section_to_string)
     set(block_attr)
     set(block_attr_str)
 
-    set(TEMP "${TEMP} { ${part}section ${name}, ${part}section ${name}.* }")
+    if(noinput STREQUAL "init")
+      set(TEMP "${TEMP} { ${part}section ${initprefix}${original_name}_init, ${part}section ${initprefix}${original_name}.*_init }")
+    else()
+      set(TEMP "${TEMP} { ${part}section ${name}, ${part}section ${name}.* }")
+    endif()
     if(${length} GREATER 0)
       set(TEMP "${TEMP},")
     endif()
