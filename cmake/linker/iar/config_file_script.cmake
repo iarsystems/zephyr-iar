@@ -97,7 +97,7 @@ function(process_region)
         EXPR "@ADDR(${symbol_start})@"
         )
     endif()
-    # Treat BSS to be noinit
+    # When using zephyr standard init, treat BSS to be noinit.
     if(CONFIG_IAR_ZEPHYR_INIT AND type STREQUAL BSS)
       set_property(GLOBAL PROPERTY ${section}_NOINIT TRUE)
     endif()
@@ -820,7 +820,11 @@ function(section_to_string)
 
       set(TEMP "${TEMP}\n\"${name}_init\": place in ${group_parent_lma} {\n")
       foreach(section ${current_sections})
-        set(TEMP "${TEMP}  ${section}_init,\n")
+        #only section patterns can be placed like this..
+        # e.g. zeroinit (from +ZI) cant be handled
+        if(section MATCHES "^section.*" )
+          set(TEMP "${TEMP}  ${section}_init,\n")
+        endif()
       endforeach()
       set(TEMP "${TEMP}};")
     elseif(CONFIG_IAR_ZEPHYR_INIT)
