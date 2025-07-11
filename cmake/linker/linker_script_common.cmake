@@ -1,5 +1,9 @@
 find_package(Zephyr REQUIRED COMPONENTS extensions HINTS ${CMAKE_CURRENT_LIST_DIR}/../../)
 
+set(CMAKE_VERBOSE_MAKEFILE 1)
+
+include(${CMAKE_CURRENT_LIST_DIR}/linker_script_variable_utils.cmake)
+
 #
 # Create functions - start
 #
@@ -728,7 +732,7 @@ endforeach()
 # target to special treatment. IAR uses this to implement evaluation of
 # section sizes used for MPU_ALIGN (or any other expressions that ilink
 # does not support
-if(NOT COMMAND preview_var_replacement)
+if(1 OR NOT COMMAND preview_var_replacement)
   function(preview_var_replacement result_ptr src)
     #default to doing nothing:
     set(${result_ptr} "${src}" PARENT_SCOPE)
@@ -738,60 +742,9 @@ endif()
 # predefined @variables@
 set(AT_VAR_AT "@") # allows escaping of @
 
-# To pickup information gathered by the scripts from the previous pass, we use
-# the syntax @FOO[,undef:VALUE][,var=VALUE]@
-# The expansion is recursive so if FOO contains @BAR@ it @BAR will also be
-# expanded
-# Where the undef:VALUE gets picked if we dont find FOO
-# and foo=bar defines a (local) variable in the coming expansion
-# The variable values are kept in cmake varaiables, MOSTLY with the
-# AT_VAR_ prefix to avoid name-clashes
-function(do_var_replace_in res_ptr src)
-  string(REGEX MATCHALL "@[^@]*@" match_res "${src}")
-  foreach(match IN LISTS match_res)
-    #Drop the leading and closing @
-    string(REGEX MATCH "@([^@]*)@" expr ${match})
-
-    # Turn the , into ; to treat it as a list:
-    string(REPLACE "," ";" expr ${CMAKE_MATCH_1})
-    unset(undef_value)
-    list(POP_FRONT expr var)
-    foreach(e IN LISTS expr)
-      if(e MATCHES "undef:([^,]*)")
-        set(undef_value ${CMAKE_MATCH_1})
-      elseif(e MATCHES "([^=;]+)=([^=;]+)")
-        set(AT_VAR_${CMAKE_MATCH_1} ${CMAKE_MATCH_2})
-      endif()
-    endforeach()
-
-    if(DEFINED "AT_VAR_${var}")
-      set(value "${AT_VAR_${var}}")
-    elseif(DEFINED ${var})
-      set(value "${${var}}")
-    elseif(DEFINED undef_value)
-      set(value "${undef_value}")
-    else()
-      # can't warn here because we can't check for what is relevant in this pass
-      # message(WARNING "Missing definition for ${match}")
-      continue()
-    endif()
-
-    #Resolve variables inside variables
-    do_var_replace_in(value "${value}")
-
-    preview_var_replacement(value "${value}")
-    if(CMAKE_VERBOSE_MAKEFILE)
-      message("Using variable ${match} with value ${value}")
-    endif()
-    string(REPLACE "${match}" "${value}" src "${src}")
-  endforeach()
-  set(${res_ptr} "${src}" PARENT_SCOPE)
-endfunction()
-
 foreach(input IN ITEMS "MEMORY_REGIONS" "GROUPS" "SECTIONS" "SECTION_SETTINGS")
-  do_var_replace_in(${input} "${${input}}")
+  expand_variables("${${input}}" ${input})
 endforeach()
-
 
 create_system(OBJECT new_system NAME ZEPHYR_LINKER_v1 FORMAT ${FORMAT} ENTRY ${ENTRY})
 
