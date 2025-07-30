@@ -2535,15 +2535,20 @@ endfunction()
 #
 # APPEND: Flag indicated that the property should be appended to the existing
 #         value list for the property.
+# ASSEMBLER: Flag indicated that the property should be added as an assembler
+#            property as well.
 # PROPERTY: Name of property with the value(s) following immediately after
 #           property name
 function(set_compiler_property)
-  set(options APPEND)
+  set(options APPEND ASSEMBLER)
   set(multi_args  PROPERTY)
   cmake_parse_arguments(COMPILER_PROPERTY "${options}" "${single_args}" "${multi_args}" ${ARGN})
   if(COMPILER_PROPERTY_APPEND)
    set(APPEND "APPEND")
    set(APPEND-CPP "APPEND")
+  endif()
+  if(COMPILER_PROPERTY_ASSEMBLER)
+    set_property(TARGET asm ${APPEND} PROPERTY ${COMPILER_PROPERTY_PROPERTY})
   endif()
 
   set_property(TARGET compiler ${APPEND} PROPERTY ${COMPILER_PROPERTY_PROPERTY})

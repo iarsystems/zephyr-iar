@@ -12,16 +12,16 @@ list(APPEND CXX_EXCLUDED_OPTIONS
 #####################################################
 # This section covers flags related to optimization #
 #####################################################
-set_compiler_property(PROPERTY no_optimization -O0)
+set_compiler_property(ASSEMBLER PROPERTY no_optimization -O0)
 if(CMAKE_C_COMPILER_VERSION VERSION_LESS "4.8.0")
-  set_compiler_property(PROPERTY optimization_debug -O0)
+  set_compiler_property(ASSEMBLER PROPERTY optimization_debug -O0)
 else()
-  set_compiler_property(PROPERTY optimization_debug -Og)
+  set_compiler_property(ASSEMBLER PROPERTY optimization_debug -Og)
 endif()
-set_compiler_property(PROPERTY optimization_speed -O2)
-set_compiler_property(PROPERTY optimization_size  -Os)
-set_compiler_property(PROPERTY optimization_size_aggressive -Oz)
-set_compiler_property(PROPERTY optimization_fast -Ofast)
+set_compiler_property(ASSEMBLER PROPERTY optimization_speed -O2)
+set_compiler_property(ASSEMBLER PROPERTY optimization_size  -Os)
+set_compiler_property(ASSEMBLER PROPERTY optimization_size_aggressive -Oz)
+set_compiler_property(ASSEMBLER PROPERTY optimization_fast -Ofast)
 
 if(CMAKE_C_COMPILER_VERSION GREATER_EQUAL "4.5.0")
   set_compiler_property(PROPERTY optimization_lto -flto=auto)
