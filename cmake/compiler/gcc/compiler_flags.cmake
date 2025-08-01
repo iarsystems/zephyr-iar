@@ -28,6 +28,12 @@ if(CMAKE_C_COMPILER_VERSION GREATER_EQUAL "4.5.0")
   set_compiler_property(PROPERTY prohibit_lto -fno-lto)
 endif()
 
+set_property(TARGET asm PROPERTY no_optimization -O0)
+set_property(TARGET asm PROPERTY optimization_debug -Og)
+set_property(TARGET asm PROPERTY optimization_speed -O2)
+set_property(TARGET asm PROPERTY optimization_size -Os)
+set_property(TARGET asm PROPERTY optimization_fast -O3)
+
 #######################################################
 # This section covers flags related to warning levels #
 #######################################################
