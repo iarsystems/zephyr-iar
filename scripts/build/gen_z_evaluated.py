@@ -58,8 +58,11 @@ def parse_elf_file(file):
 
         for section in symbol_tbls:
             for symbol in section.iter_symbols():
-                if symbol['st_shndx'] != "SHN_ABS":
+                if symbol['st_shndx'] == "SHN_UNDEF":
                     continue
+                if symbol['st_info']['bind'] != 'STB_GLOBAL':
+                    continue
+
                 symbols[symbol.name] = symbol['st_value']
         return symbols
 

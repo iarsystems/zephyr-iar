@@ -24,13 +24,13 @@ if((NOT DEFINED CONFIG_CUSTOM_SECTION_ALIGN) AND DEFINED  CONFIG_MPU_REQUIRES_PO
   # isn't known until then.
 
   set(MPU_ALIGN "MAX(${region_min_align} , 2 << LOG2CEIL(@region_size@) )")
-  if(ZEPHYR_TOOLCHAIN_VARIANT STREQUAL "iar")
+  #if(ZEPHYR_TOOLCHAIN_VARIANT STREQUAL "iar")
     # Ilink needs help with the align-to-power-of-2-of-region-size thing.
     # So tag it with IAR_EVALUATE to be handled by iar_linker_evaluate.py
     # Note that we need to escape the enclosing @ to get the evaluation
     # order right
-    set(MPU_ALIGN "@AT@IAR_EVALUATE,undef:0,expr=${MPU_ALIGN}@AT@")
-  endif()
+    set(MPU_ALIGN "@(Z_EVALUATE:undef=0:expr=${MPU_ALIGN})@")
+  #endif()
   zephyr_linker_include_var(VAR MPU_ALIGN VALUE "${MPU_ALIGN}")
   #message(WARNING "We can not handle . = ALIGN( 1 << LOG2CEIL(region_size))  ")
 else()
