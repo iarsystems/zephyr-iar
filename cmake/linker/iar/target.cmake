@@ -61,11 +61,6 @@ macro(configure_linker_script linker_script_gen linker_pass_define)
 
   message("Yopehjdi: ${linker_script_gen} pass: ${linker_pass_define} current pass: ${ZEPHYR_CURRENT_LINKER_PASS} previous pass: ${PREV_PASS} stage_executable: ${ZEPHYR_LINK_STAGE_EXECUTABLE} iar_evaluate: ${IAR_EVALUATE_FILE}")
 
-  get_property(IAR_EVALUATE_INPUT GLOBAL PROPERTY IAR_EVALUATE_PREVIOUS_FILE)
-  if(IAR_EVALUATE_INPUT)
-    zephyr_linker_include_generated(CMAKE ${IAR_EVALUATE_INPUT} PASS ${linker_pass_define})
-  endif()
-
   add_custom_command(
     OUTPUT ${linker_script_gen}
            ${STEERING_FILE}
@@ -73,7 +68,6 @@ macro(configure_linker_script linker_script_gen linker_pass_define)
            ${extra_dependencies}
            ${cmake_linker_script_settings}
            ${DEVICE_API_LD_TARGET}
-           ${IAR_EVALUATE_INPUT}
     COMMAND ${CMAKE_COMMAND}
       -C ${cmake_linker_script_settings}
       -DPASS="${linker_pass_define}"
@@ -83,23 +77,6 @@ macro(configure_linker_script linker_script_gen linker_pass_define)
       -P ${ZEPHYR_BASE}/cmake/linker/iar/config_file_script.cmake
   )
 
-  #After building ZEPHYR_LINK_STAGE_EXECUTABLE we can generate the IAR_EVALUATE_FILE file.
-  set (IAR_EVALUATE_FILE ${PROJECT_BINARY_DIR}/include/generated/iar_evaluated_${linker_pass_define}.cmake)
-  set_property(GLOBAL PROPERTY IAR_EVALUATE_PREVIOUS_FILE ${IAR_EVALUATE_FILE})
-  add_custom_command(
-    COMMENT "Generate ${IAR_EVALUATE_FILE}"
-    OUTPUT ${IAR_EVALUATE_FILE}
-    DEPENDS ${extra_dependencies}
-    #Ideally we should have the previous iar_evaluate_PREVIOUS_PASS.json here too.
-    COMMAND
-    ${PYTHON_EXECUTABLE}
-    ${ZEPHYR_BASE}/scripts/build/gen_iar_evaluate.py
-    --elf $<TARGET_FILE:${ZEPHYR_LINK_STAGE_EXECUTABLE}>
-    --input ${PROJECT_BINARY_DIR}/iar_evaluate_${linker_pass_define}.json
-    --output ${IAR_EVALUATE_FILE}
-    $<$<BOOL:${CMAKE_VERBOSE_MAKEFILE}>:--verbose>
-    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-    )
 endmacro()
 
 function(toolchain_ld_link_elf)
