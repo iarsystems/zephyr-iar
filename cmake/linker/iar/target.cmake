@@ -144,3 +144,9 @@ endfunction(toolchain_ld_link_elf)
 
 include(${ZEPHYR_BASE}/cmake/linker/ld/target_relocation.cmake)
 include(${ZEPHYR_BASE}/cmake/linker/ld/target_configure.cmake)
+
+
+# a dummy implementation to avoid spurious warnings from the default
+function(compiler_set_linker_properties)
+  message("ILink does not use linker property lib_include_dir or rt_library")
+endfunction()
