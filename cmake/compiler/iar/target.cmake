@@ -148,3 +148,7 @@ endforeach()
 foreach(F ${IAR_ASM_FLAGS})
   list(APPEND TOOLCHAIN_C_FLAGS $<$<COMPILE_LANGUAGE:ASM>:${F}>)
 endforeach()
+
+
+function(compiler_set_linker_properties)
+endfunction()
