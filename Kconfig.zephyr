@@ -312,6 +312,15 @@ config LINKER_USE_NO_RELAX
 	help
 	  Hidden symbol to allow features to force the use of no relax.
 
+config LINKER_SIZE_IN_SYMBOL
+	bool
+  depends on !(LLVM_USE_LLD && RISCV_CMODEL_MEDANY)
+  default y
+	help
+    This option decides if section sizes will be encoded into symbols
+    or calculated during runtime. Some architectures and toolchains don't
+    support this.
+
 config LINKER_USE_RELAX
 	bool "Linker optimization of call addressing"
 	depends on !LINKER_USE_NO_RELAX

@@ -28,8 +28,8 @@
  */
 static inline size_t z_tls_data_size(void)
 {
-	return (size_t)(uintptr_t)__tdata_size +
-	       (size_t)(uintptr_t)__tbss_size;
+	return (size_t)(uintptr_t)LINKER_CALCULATE_SIZE(__tdata) +
+	       (size_t)(uintptr_t)LINKER_CALCULATE_SIZE(__tbss);
 }
 
 /**
@@ -43,11 +43,11 @@ static inline size_t z_tls_data_size(void)
 static inline void z_tls_copy(char *dest)
 {
 	/* Copy initialized data (tdata) */
-	memcpy(dest, __tdata_start, (size_t)(uintptr_t)__tdata_size);
+	memcpy(dest, __tdata_start, (size_t)(uintptr_t)LINKER_CALCULATE_SIZE(__tdata));
 
 	/* Clear BSS data (tbss) */
-	dest += (size_t)(uintptr_t)__tdata_size;
-	memset(dest, 0, (size_t)(uintptr_t)__tbss_size);
+	dest += (size_t)(uintptr_t)LINKER_CALCULATE_SIZE(__tdata);
+	memset(dest, 0, (size_t)(uintptr_t)LINKER_CALCULATE_SIZE(__tbss));
 }
 
 #endif /* ZEPHYR_KERNEL_INCLUDE_KERNEL_TLS_H_ */

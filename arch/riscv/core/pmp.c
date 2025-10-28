@@ -425,7 +425,7 @@ void z_riscv_pmp_init(void)
 	/* The read-only area is always there for every mode */
 	set_pmp_entry(&index, PMP_R | PMP_X | PMP_L,
 		      (uintptr_t)__rom_region_start,
-		      (size_t)__rom_region_size,
+		      (size_t)LINKER_CALCULATE_SIZE(__rom_region),
 		      pmp_addr, pmp_cfg, ARRAY_SIZE(pmp_addr));
 
 #ifdef CONFIG_NULL_POINTER_EXCEPTION_DETECTION_PMP

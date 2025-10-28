@@ -92,6 +92,14 @@ GDATA(__data_region_num_words)
 
 #else /* ! _ASMLANGUAGE */
 
+#ifdef CONFIG_LINKER_SIZE_IN_SYMBOL
+#define LINKER_CALCULATE_SIZE(prefix) (size_t)(uintptr_t)prefix##_size
+#define LINKER_DEFINE_SIZE(prefix) extern char prefix##_size[]
+#else
+#define LINKER_CALCULATE_SIZE(prefix) (size_t)((uintptr_t)(prefix##_end - prefix##_start))
+#define LINKER_DEFINE_SIZE(prefix)
+#endif
+
 #include <zephyr/types.h>
 /*
  * Memory owned by the kernel, to be used as shared memory between
@@ -106,14 +114,14 @@ GDATA(__data_region_num_words)
  */
 extern char _app_smem_start[];
 extern char _app_smem_end[];
-extern char _app_smem_size[];
+LINKER_DEFINE_SIZE(_app_smem);
 extern char _app_smem_rom_start[];
 extern char _app_smem_num_words[];
 
 #ifdef CONFIG_LINKER_USE_PINNED_SECTION
 extern char _app_smem_pinned_start[];
 extern char _app_smem_pinned_end[];
-extern char _app_smem_pinned_size[];
+LINKER_DEFINE_SIZE(_app_smem_pinned);
 extern char _app_smem_pinned_num_words[];
 #endif
 
@@ -129,7 +137,7 @@ extern char _app_smem_pinned_num_words[];
  */
 extern char __kernel_ram_start[];
 extern char __kernel_ram_end[];
-extern char __kernel_ram_size[];
+LINKER_DEFINE_SIZE(__kernel_ram);
 
 /* Used by arch_bss_zero or arch-specific implementation */
 extern char __bss_start[];
@@ -151,7 +159,7 @@ extern char z_mapped_end[];
 /* Includes text and rodata */
 extern char __rom_region_start[];
 extern char __rom_region_end[];
-extern char __rom_region_size[];
+LINKER_DEFINE_SIZE(__rom_region);
 
 /* Includes all ROMable data, i.e. the size of the output image file. */
 extern char _flash_used[];
@@ -159,15 +167,15 @@ extern char _flash_used[];
 /* datas, bss, noinit */
 extern char _image_ram_start[];
 extern char _image_ram_end[];
-extern char _image_ram_size[];
+LINKER_DEFINE_SIZE(_image_ram);
 
 extern char __text_region_start[];
 extern char __text_region_end[];
-extern char __text_region_size[];
+LINKER_DEFINE_SIZE(__text_region);
 
 extern char __rodata_region_start[];
 extern char __rodata_region_end[];
-extern char __rodata_region_size[];
+LINKER_DEFINE_SIZE(__rodata_region);
 
 extern char _vector_start[];
 extern char _vector_end[];
@@ -179,13 +187,13 @@ extern char __vector_relay_table[];
 #ifdef CONFIG_SRAM_VECTOR_TABLE
 extern char _sram_vector_start[];
 extern char _sram_vector_end[];
-extern char _sram_vector_size[];
+LINKER_DEFINE_SIZE(_sram_vector);
 #endif
 
 #ifdef CONFIG_COVERAGE_GCOV
 extern char __gcov_bss_start[];
 extern char __gcov_bss_end[];
-extern char __gcov_bss_size[];
+LINKER_DEFINE_SIZE(__gcov_bss);
 #endif	/* CONFIG_COVERAGE_GCOV */
 
 /* end address of image, used by newlib for the heap */
@@ -206,7 +214,7 @@ extern char __ccm_end[];
 #if (DT_NODE_HAS_STATUS_OKAY(DT_CHOSEN(zephyr_itcm)))
 extern char __itcm_start[];
 extern char __itcm_end[];
-extern char __itcm_size[];
+LINKER_DEFINE_SIZE(__itcm);
 extern char __itcm_load_start[];
 #endif
 
@@ -229,7 +237,7 @@ extern char __ocm_bss_start[];
 extern char __ocm_bss_end[];
 extern char __ocm_start[];
 extern char __ocm_end[];
-extern char __ocm_size[];
+LINKER_DEFINE_SIZE(__ocm);
 #endif
 
 /* Used by the Security Attribution Unit to configure the
@@ -238,7 +246,7 @@ extern char __ocm_size[];
 #ifdef CONFIG_ARM_FIRMWARE_HAS_SECURE_ENTRY_FUNCS
 extern char __sg_start[];
 extern char __sg_end[];
-extern char __sg_size[];
+LINKER_DEFINE_SIZE(__sg);
 #endif /* CONFIG_ARM_FIRMWARE_HAS_SECURE_ENTRY_FUNCS */
 
 /*
@@ -253,13 +261,13 @@ extern char __sg_size[];
 #ifdef CONFIG_NOCACHE_MEMORY
 extern char _nocache_ram_start[];
 extern char _nocache_ram_end[];
-extern char _nocache_ram_size[];
+LINKER_DEFINE_SIZE(_nocache_ram);
 extern char _nocache_noload_ram_start[];
 extern char _nocache_noload_ram_end[];
-extern char _nocache_noload_ram_size[];
+LINKER_DEFINE_SIZE(_nocache_noload_ram);
 extern char _nocache_load_ram_start[];
 extern char _nocache_load_ram_end[];
-extern char _nocache_load_ram_size[];
+LINKER_DEFINE_SIZE(_nocache_load_ram);
 extern char _nocache_load_rom_start[];
 #endif /* CONFIG_NOCACHE_MEMORY */
 
@@ -273,7 +281,7 @@ extern char _nocache_load_rom_start[];
 extern char __ramfunc_region_start[];
 extern char __ramfunc_start[];
 extern char __ramfunc_end[];
-extern char __ramfunc_size[];
+LINKER_DEFINE_SIZE(__ramfunc);
 extern char __ramfunc_load_start[];
 #endif /* CONFIG_ARCH_HAS_RAMFUNC_SUPPORT */
 
@@ -294,16 +302,17 @@ extern char z_kobject_data_begin[];
 #ifdef CONFIG_THREAD_LOCAL_STORAGE
 extern char __tdata_start[];
 extern char __tdata_end[];
-extern char __tdata_size[];
+LINKER_DEFINE_SIZE(__tdata);
 extern char __tdata_align[];
 extern char __tbss_start[];
 extern char __tbss_end[];
-extern char __tbss_size[];
 extern char __tbss_align[];
+LINKER_DEFINE_SIZE(__tbss);
 extern char __tls_start[];
 extern char __tls_end[];
-extern char __tls_size[];
+LINKER_DEFINE_SIZE(__tls);
 #endif /* CONFIG_THREAD_LOCAL_STORAGE */
+
 
 #ifdef CONFIG_LINKER_USE_BOOT_SECTION
 /* lnkr_boot_start[] and lnkr_boot_end[]
@@ -314,19 +323,19 @@ extern char lnkr_boot_end[];
 
 extern char lnkr_boot_text_start[];
 extern char lnkr_boot_text_end[];
-extern char lnkr_boot_text_size[];
+LINKER_DEFINE_SIZE(lnkr_boot_text);
 extern char lnkr_boot_data_start[];
 extern char lnkr_boot_data_end[];
-extern char lnkr_boot_data_size[];
+LINKER_DEFINE_SIZE(lnkr_boot_data);
 extern char lnkr_boot_rodata_start[];
 extern char lnkr_boot_rodata_end[];
-extern char lnkr_boot_rodata_size[];
+LINKER_DEFINE_SIZE(lnkr_boot_rodata);
 extern char lnkr_boot_bss_start[];
 extern char lnkr_boot_bss_end[];
-extern char lnkr_boot_bss_size[];
+LINKER_DEFINE_SIZE(lnkr_boot_bss);
 extern char lnkr_boot_noinit_start[];
 extern char lnkr_boot_noinit_end[];
-extern char lnkr_boot_noinit_size[];
+LINKER_DEFINE_SIZE(lnkr_boot_noinit);
 #endif /* CONFIG_LINKER_USE_BOOT_SECTION */
 
 #ifdef CONFIG_LINKER_USE_PINNED_SECTION
@@ -340,19 +349,19 @@ extern char lnkr_pinned_end[];
 
 extern char lnkr_pinned_text_start[];
 extern char lnkr_pinned_text_end[];
-extern char lnkr_pinned_text_size[];
+LINKER_DEFINE_SIZE(lnkr_pinned_text);
 extern char lnkr_pinned_data_start[];
 extern char lnkr_pinned_data_end[];
-extern char lnkr_pinned_data_size[];
+LINKER_DEFINE_SIZE(lnkr_pinned_data);
 extern char lnkr_pinned_rodata_start[];
 extern char lnkr_pinned_rodata_end[];
-extern char lnkr_pinned_rodata_size[];
+LINKER_DEFINE_SIZE(lnkr_pinned_rodata);
 extern char lnkr_pinned_bss_start[];
 extern char lnkr_pinned_bss_end[];
-extern char lnkr_pinned_bss_size[];
+LINKER_DEFINE_SIZE(lnkr_pinned_bss);
 extern char lnkr_pinned_noinit_start[];
 extern char lnkr_pinned_noinit_end[];
-extern char lnkr_pinned_noinit_size[];
+LINKER_DEFINE_SIZE(lnkr_pinned_noinit);
 
 __pinned_func
 static inline bool lnkr_is_pinned(uint8_t *addr)
@@ -390,10 +399,10 @@ extern char lnkr_ondemand_load_start[];
 
 extern char lnkr_ondemand_text_start[];
 extern char lnkr_ondemand_text_end[];
-extern char lnkr_ondemand_text_size[];
+LINKER_DEFINE_SIZE(lnkr_ondemand_text);
 extern char lnkr_ondemand_rodata_start[];
 extern char lnkr_ondemand_rodata_end[];
-extern char lnkr_ondemand_rodata_size[];
+LINKER_DEFINE_SIZE(lnkr_ondemand_rodata);
 
 #endif /* CONFIG_LINKER_USE_ONDEMAND_SECTION */
 #endif /* ! _ASMLANGUAGE */
@@ -402,5 +411,7 @@ extern char lnkr_ondemand_rodata_size[];
 #undef DT_NODE_HAS_STATUS
 #undef DT_NODE_HAS_STATUS_OKAY
 #endif
+
+#undef LINKER_DEFINE_SIZE
 
 #endif /* ZEPHYR_INCLUDE_LINKER_LINKER_DEFS_H_ */
