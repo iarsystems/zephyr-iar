@@ -6,6 +6,7 @@
 
 if(CONFIG_SOC_MCXN947_CPU0 OR CONFIG_SECOND_CORE_MCUX)
   board_runner_args(jlink "--device=MCXN947_M33_0" "--reset-after-load")
+  board_runner_args(iar "--device=MCXN947_core0")
   board_runner_args(linkserver  "--device=MCXN947:FRDM-MCXN947")
   if(CONFIG_SECOND_CORE_MCUX)
     board_runner_args(linkserver  "--core=all")
@@ -25,6 +26,7 @@ if(CONFIG_SOC_MCXN947_CPU0 OR CONFIG_SECOND_CORE_MCUX)
                                \"size\":\"0x00140000\",\"type\":\"RAM\"\}")
 elseif(CONFIG_SOC_MCXN947_CPU1)
   board_runner_args(jlink "--device=MCXN947_M33_1" "--reset-after-load")
+  board_runner_args(iar "--device=MCXN947_core1")
   board_runner_args(linkserver  "--device=MCXN947:FRDM-MCXN947")
   board_runner_args(linkserver  "--core=cm33_core1")
 endif()
@@ -34,6 +36,7 @@ board_runner_args(pyocd "--target=mcxn947")
 
 include(${ZEPHYR_BASE}/boards/common/linkserver.board.cmake)
 include(${ZEPHYR_BASE}/boards/common/jlink.board.cmake)
+include(${ZEPHYR_BASE}/boards/common/iar.board.cmake)
 include(${ZEPHYR_BASE}/boards/common/pyocd.board.cmake)
 
 if(CONFIG_BUILD_WITH_TFM)

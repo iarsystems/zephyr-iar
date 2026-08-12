@@ -7,6 +7,7 @@ board_runner_args(jlink
   "--iface=swd"
   "--reset"
 )
+board_runner_args(iar "--device=S32K146")
 
 board_runner_args(trace32
   "--startup-args" "elfFile=${PROJECT_BINARY_DIR}/${KERNEL_ELF_NAME}"
@@ -18,4 +19,5 @@ else()
 endif()
 
 include(${ZEPHYR_BASE}/boards/common/jlink.board.cmake)
+include(${ZEPHYR_BASE}/boards/common/iar.board.cmake)
 include(${ZEPHYR_BASE}/boards/common/trace32.board.cmake)

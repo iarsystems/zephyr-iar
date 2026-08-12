@@ -21,5 +21,7 @@ endif()
 
 if(CONFIG_SOC_MIMX9352_A55)
   board_runner_args(jlink "--device=MIMX9352_A55_0" "--no-reset" "--flash-sram")
+  board_runner_args(iar "--device=MIMX9352_A55")
   include(${ZEPHYR_BASE}/boards/common/jlink.board.cmake)
+  include(${ZEPHYR_BASE}/boards/common/iar.board.cmake)
 endif()

@@ -179,6 +179,14 @@ configured by default to use the LPC-Link2.
         1. Install the :ref:`linkserver-debug-host-tools` and make sure they are in your search path.
         2. To update the debug firmware, please follow the instructions on `MIMXRT595-EVK Debug Firmware`
 
+    .. group-tab:: IAR EWARM
+
+        1. Install the :ref:`iar-debug-host-tools`.
+        2. Follow the instructions to configure a J-Link or CMSIS-DAP probe. Alternately connect an
+           I-jet probe to J2 and **remove** jumpers J17, J18, and J19 (these are installed by default).
+        3. Use the corresponding ``--driver`` option (``J-Link``, ``CMSIS-DAP`` or ``I-jet``
+           default) with the ``-r iar`` option.
+
 Configuring a Console
 =====================
 

@@ -135,6 +135,7 @@ configure the board appropriately.
 
 * :ref:`linkserver-debug-host-tools` (Default, Supported by NXP)
 * :ref:`jlink-debug-host-tools` (Supported by NXP)
+* :ref:`iar-debug-host-tools` (Not supported by NXP)
 * :ref:`pyocd-debug-host-tools` (Not supported by NXP)
 
 Once the host tool and board are configured, build and flash applications

@@ -4,8 +4,10 @@
 # SPDX-License-Identifier: Apache-2.0
 
 board_runner_args(jlink "--device=MIMX9131" "--no-reset" "--flash-sram")
+board_runner_args(iar "--device=MIMX9131_A55")
 
 include(${ZEPHYR_BASE}/boards/common/jlink.board.cmake)
+include(${ZEPHYR_BASE}/boards/common/iar.board.cmake)
 
 if(CONFIG_BOARD_NXP_SPSDK_IMAGE OR (DEFINED ENV{USE_NXP_SPSDK_IMAGE}
   AND "$ENV{USE_NXP_SPSDK_IMAGE}" STREQUAL "y"))

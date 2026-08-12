@@ -238,6 +238,10 @@ The integrated LPC-Link2 hardware can also be used as a J-Link probe with a
 firmware update, as described in :ref:`lpclink2-jlink-onboard-debug-probe`.
 The :ref:`jlink-debug-host-tools` should be available in this case.
 
+An external probe can be connected to P7. Note that when an external probe is
+used, P6 should not be connected as to not power the on board debug probe.
+Therefore the console can not be used when using an external probe.
+
 Configuring a Console
 =====================
 

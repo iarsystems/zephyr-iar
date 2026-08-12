@@ -130,11 +130,22 @@ default runner from pyOCD to J-Link:
    :gen-args: -DBOARD_FLASH_RUNNER=jlink -DBOARD_DEBUG_RUNNER=jlink
    :goals: build
 
+Option 3: I-jet
+------------------------
+
+Install the :ref:`iar-debug-host-tools`.
+
+Connect an I-jet probe to J6. And connect power to the board.
+Use the ``-r iar`` option with west to use the iar runner.
+
+The iar runner can also be used with a J-Link external probe. Use the
+``--driver J-Link``.
+
 Note:
 -----
 
-The runners supported by NXP are LinkServer and JLink. pyOCD is another potential option,
-but NXP does not test or support the pyOCD runner.
+The runners supported by NXP are LinkServer and JLink. pyOCD and iar are other potential options,
+but NXP does not test or support the pyOCD and iar runners.
 
 Configuring a Console
 =====================

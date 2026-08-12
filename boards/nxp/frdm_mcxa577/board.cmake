@@ -5,6 +5,7 @@
 #
 
 board_runner_args(jlink "--device=MCXA577")
+board_runner_args(iar "--device=MCXA577")
 board_runner_args(linkserver "--device=MCXA577:FRDM-MCXA577")
 
 # Linkserver v25.12.xx and earlier do not include the secure regions in the
@@ -18,6 +19,7 @@ board_runner_args(pyocd "--target=MCXA577")
 
 include(${ZEPHYR_BASE}/boards/common/linkserver.board.cmake)
 include(${ZEPHYR_BASE}/boards/common/jlink.board.cmake)
+include(${ZEPHYR_BASE}/boards/common/iar.board.cmake)
 include(${ZEPHYR_BASE}/boards/common/pyocd.board.cmake)
 
 if(CONFIG_BUILD_WITH_TFM)

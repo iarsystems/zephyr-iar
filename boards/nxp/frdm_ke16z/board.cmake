@@ -6,6 +6,8 @@
 
 board_runner_args(linkserver  "--device=MKE16Z64xxx4:FRDM-KE16Z")
 board_runner_args(jlink "--device=MKE16Z64xxx4" "--reset-after-load")
+board_runner_args(iar "--device=MKE16Z64xxx4")
 
 include(${ZEPHYR_BASE}/boards/common/linkserver.board.cmake)
 include(${ZEPHYR_BASE}/boards/common/jlink.board.cmake)
+include(${ZEPHYR_BASE}/boards/common/iar.board.cmake)

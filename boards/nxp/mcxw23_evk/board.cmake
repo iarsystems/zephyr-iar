@@ -3,8 +3,10 @@
 
 board_runner_args(linkserver  "--device=MCXW236:MCXW23-EVK")
 board_runner_args(jlink "--device=MCXW236" "--reset-after-load")
+board_runner_args(iar "--device=MCXW236")
 board_runner_args(pyocd "--target=mcxw236")
 
 include(${ZEPHYR_BASE}/boards/common/linkserver.board.cmake)
 include(${ZEPHYR_BASE}/boards/common/jlink.board.cmake)
+include(${ZEPHYR_BASE}/boards/common/iar.board.cmake)
 include(${ZEPHYR_BASE}/boards/common/pyocd.board.cmake)

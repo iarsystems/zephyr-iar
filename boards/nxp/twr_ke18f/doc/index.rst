@@ -122,6 +122,19 @@ default runner from pyOCD to J-Link:
    :gen-args: -DBOARD_FLASH_RUNNER=jlink -DBOARD_DEBUG_RUNNER=jlink
    :goals: build
 
+Option 3: I-jet
+---------------
+
+Install the :ref:`iar-debug-host-tools`.
+
+Remove the jumpers from J11 and J12.
+Connect an I-jet probe to J10.
+
+Use the ``-r iar`` option with west to use the iar runner.
+
+The iar runner can also be used with a J-Link external probe and the on-board probe.
+Use the corresponding ``--driver`` option (``J-Link`` or ``CMSIS-DAP``)
+
 Configuring a Console
 =====================
 

@@ -9,6 +9,8 @@ to setup your debug probe:
   `Using J-Link with LPC-Link2 Probe`_
 * :ref:`linkserver-debug-host-tools`:
   `Using CMSIS-DAP with LPC-Link2 Probe`_
+* :ref:`iar-debug-host-tools`:
+  `Using CMSIS-DAP with LPC-Link2 Probe`_
 * :ref:`pyocd-debug-host-tools`:
   `Using CMSIS-DAP with LPC-Link2 Probe`_
 

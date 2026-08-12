@@ -94,6 +94,20 @@ Use the ``-r jlink`` option with west to use the jlink runner.
 
    west flash -r jlink
 
+I-jet
+--------------
+
+Install the :ref:`iar-debug-host-tools`.
+
+Connect an I-jet probe to J14. Check that jumpers J8 and J9 are **open** (they
+are shorted by default when boards ship from the factory) to ensure SWD signals
+are disconnected from the OpenSDA microcontroller.
+Use the ``-r iar`` option with west to use the iar runner.
+
+The iar runner can also be used with the on-board CMSIS-DAP and J-Link
+probes as well as an external J-Link probe. Use the corresponding ``--driver``
+option (``CMSIS-DAP`` or ``J-Link``).
+
 Configuring a Console
 =====================
 

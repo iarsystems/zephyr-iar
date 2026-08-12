@@ -86,6 +86,12 @@ Use the ``-r jlink`` option with west to use the jlink runner.
 
    west flash -r jlink
 
+:ref:`iar-debug-host-tools` can be used with both the default CMSIS-DAP probe
+and the J-Link probe.
+
+Use the ``-r iar`` option and the corresponding ``--driver`` option (``CMSIS-DAP``
+or ``J-Link``) with west to use the iar runner.
+
 Configuring a Console
 =====================
 

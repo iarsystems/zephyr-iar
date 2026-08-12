@@ -1,4 +1,4 @@
-﻿.. zephyr:board:: mimxrt1170_evk
+.. zephyr:board:: mimxrt1170_evk
 
 Overview
 ********
@@ -338,6 +338,12 @@ Alternatively, pyOCD can be used to flash and debug the board by using the
 :ref:`gs_python_deps` step in the Getting Started Guide. The runners supported
 by NXP are LinkServer and JLink. pyOCD is another potential option, but NXP
 does not test or support the pyOCD runner.
+
+:ref:`iar-debug-host-tools` can also be used with by using the ``-r iar`` option
+with west. The runner supports the J-Link probes and the CMSIS-DAP probe mentioned
+above as well as an I-jet probe. Use the corresponding ``--driver`` option (``J-Link``,
+``CMSIS-DAP`` or ``I-jet`` Default).
+Note that NXP does not test or support the iar runner.
 
 Configuring a Console
 =====================

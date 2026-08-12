@@ -123,6 +123,14 @@ For both options use the ``-r jlink`` option with west to use the jlink runner.
 
    west flash -r jlink
 
+Using IAR
+---------
+
+The IAR runner can be used with both firmwares mentioned above and an external I-jet
+or J-Link probe connected to J14. Short JP5 when using an external probe.
+Use the corresponding ``--driver`` option (``CMSIS-DAP``, ``J-Link`` or ``I-jet``
+Default) with the ``-r iar`` option.
+
 Configuring a Console
 =====================
 

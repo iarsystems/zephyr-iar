@@ -11,8 +11,10 @@ endif()
 
 if(is_cm7)
   board_runner_args(jlink "--device=MIMXRT1186xxx8_M7" "--no-reset" "--tool-opt=-jlinkscriptfile ${jlinkscript}/frdmimxrt1186_cm7.jlinkscript")
+  board_runner_args(iar "--device=MIMXRT1186xxx8_M7")
 elseif(CONFIG_BOARD_FRDM_IMXRT1186_MIMXRT1186_CM33)
   board_runner_args(jlink "--device=MIMXRT1186xxx8_M33" "--tool-opt=-jlinkscriptfile ${jlinkscript}/frdmimxrt1186_cm33.jlinkscript")
+  board_runner_args(iar "--device=MIMXRT1186xxx8_M33")
 endif()
 
 board_runner_args(linkserver "--device=MIMXRT1186xxxxx:FRDM-IMXRT1186")
@@ -22,3 +24,4 @@ endif()
 
 include(${ZEPHYR_BASE}/boards/common/linkserver.board.cmake)
 include(${ZEPHYR_BASE}/boards/common/jlink.board.cmake)
+include(${ZEPHYR_BASE}/boards/common/iar.board.cmake)

@@ -5,9 +5,11 @@
 #
 
 board_runner_args(jlink "--device=MCXA344")
+board_runner_args(iar "--device=MCXA344")
 board_runner_args(linkserver "--device=MCXA344:FRDM-MCXA344")
 board_runner_args(pyocd "--target=MCXA344")
 
 include(${ZEPHYR_BASE}/boards/common/linkserver.board.cmake)
 include(${ZEPHYR_BASE}/boards/common/jlink.board.cmake)
+include(${ZEPHYR_BASE}/boards/common/iar.board.cmake)
 include(${ZEPHYR_BASE}/boards/common/pyocd.board.cmake)

@@ -164,7 +164,7 @@ configured by default to use the MCU-Link CMSIS-DAP Onboard Debug Probe.
 
         1. Install the :ref:`linkserver-debug-host-tools` and make sure they are in your search path.
         2. To put the board in ``DFU mode`` to program the firmware, short jumper J20.
-        3. To update the debug firmware, please follow the instructions on `MIMXRT700-EVK Debug Firmware`
+        3. To update the debug firmware, please follow the instructions on `MIMXRT700-EVK Debug Firmware`_
 
     .. group-tab:: JLink External
 
@@ -176,6 +176,12 @@ configured by default to use the MCU-Link CMSIS-DAP Onboard Debug Probe.
         3. Connect the J-Link probe to J18 20-pin header.
 
         See :ref:`jlink-external-debug-probe` for more information.
+
+    .. group-tab:: I-jet
+
+        1. Install the :ref:`iar-debug-host-tools`.
+        2. To disconnect the SWD signals from onboard debug circuit, **short** jumpers JP18.
+        3. Connect the I-jet probe to J18 20-pin header.
 
 Configuring a Console
 =====================
